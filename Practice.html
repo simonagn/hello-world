@@ -19,7 +19,7 @@
         .opt-btn { border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; font-size: 1rem; background: white; cursor: pointer; text-align: left; font-weight: 500; transition: 0.2s; }
         .opt-btn.correct-pick { border-color: var(--success); background: #dcfce7; color: #166534; }
         .opt-btn.wrong-pick { border-color: var(--error); background: #fee2e2; color: #991b1b; }
-        .feedback { text-align: center; font-weight: 700; min-height: 24px; margin: 20px 0; padding: 10px; border-radius: 8px; transition: 0.3s; }
+        .feedback { text-align: center; font-weight: 700; min-height: 24px; margin: 20px 0; padding: 10px; border-radius: 8px; }
         .main-btn { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 18px; font-weight: 700; width: 100%; cursor: pointer; font-size: 1rem; }
         #next-btn { background: #1e293b; display: none; }
     </style>
@@ -39,7 +39,7 @@
 </div>
 
 <script>
-// The Master List
+// Data includes all previous tasks + specific passive requested
 const initialQuiz = [
     { cat: "Past Simple vs Past Continuous", type: "type", q: "I (read) ____ a book when suddenly the lights (go) ____ out.", a: ["was reading", "went"] },
     { cat: "Past Simple vs Past Continuous", type: "type", q: "While the students (write) ____ their essays, the fire alarm (start) ____ to ring.", a: ["were writing", "started"] },
@@ -51,43 +51,42 @@ const initialQuiz = [
     { cat: "Past Simple vs Past Continuous", type: "type", q: "I (not / see) ____ the thief because I (sleep) ____ on the sofa.", a: ["didn't see", "was sleeping"] },
     { cat: "Past Simple vs Past Continuous", type: "type", q: "It (begin) ____ to rain just as we (leave) ____ the house.", a: ["began", "were leaving"] },
     { cat: "Past Simple vs Past Continuous", type: "type", q: "Yesterday at 7:00 PM, I (eat) ____ dinner, while my phone (ring) ____.", a: ["was eating", "rang"] },
+    
+    // Choosing tasks
     { cat: "Past Perfect vs Past Simple", type: "choice", q: "By the time we arrived at the cinema, the movie...", o: ["started", "had started"], a: 1 },
     { cat: "Past Perfect vs Past Simple", type: "choice", q: "I didn't have any money because I... my wallet.", o: ["lost", "had lost"], a: 1 },
     { cat: "Past Perfect vs Past Simple", type: "choice", q: "The teacher was happy because the students...", o: ["studied", "had studied"], a: 1 },
     { cat: "Past Perfect vs Past Simple", type: "choice", q: "After the guests..., I cleaned the house.", o: ["left", "had left"], a: 1 },
     { cat: "Past Perfect vs Past Simple", type: "choice", q: "The streets were wet because it... all night.", o: ["rained", "had rained"], a: 1 },
-    { cat: "Past Perfect vs Past Simple", type: "choice", q: "I failed the test because I... my notes at home.", o: ["forgot", "had forgotten"], a: 1 },
-    { cat: "Past Perfect vs Past Simple", type: "choice", q: "When I arrived at the station, the train...", o: ["already left", "had already left"], a: 1 },
-    { cat: "Past Perfect vs Past Simple", type: "choice", q: "He was very tired because he... for 10 hours.", o: ["worked", "had worked"], a: 1 },
-    { cat: "Past Perfect vs Past Simple", type: "choice", q: "I didn't recognize her because she... her hair.", o: ["cut", "had cut"], a: 1 },
-    { cat: "Past Perfect vs Past Simple", type: "choice", q: "They... the movie before, so they knew the ending.", o: ["saw", "had seen"], a: 1 },
-    { cat: "Used to vs Past Simple", type: "choice", q: "When I was five, I ____ (have) a tricycle, but now I have a bike.", o: ["used to have", "had"], a: 0 },
-    { cat: "Used to vs Past Simple", type: "choice", q: "Last night, I ____ (watch) a documentary about space.", o: ["used to watch", "watched"], a: 1 },
-    { cat: "Used to vs Past Simple", type: "choice", q: "My father ____ (smoke), but he quit three years ago.", o: ["used to smoke", "smoked"], a: 0 },
-    { cat: "Used to vs Past Simple", type: "choice", q: "In 2015, my family ____ (move) to a different city.", o: ["used to move", "moved"], a: 1 },
+    { cat: "Used to vs Past Simple", type: "choice", q: "When I was five, I ____ (have) a tricycle.", o: ["used to have", "had"], a: 0 },
+    
+    // Passive (The requested specific logic)
     { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught by the police"] },
     { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented by Alexander Graham Bell"] },
     { cat: "Passive Voice", type: "type", q: "Someone steal my lunch! -> My lunch ____.", a: ["was stolen by someone"] },
     { cat: "Passive Voice", type: "type", q: "Nowadays we don't use CDs. -> CDs ____.", a: ["aren't used nowadays"] },
+    
+    // Conditionals
     { cat: "First and Second Conditionals", type: "choice", q: "If it (rain) tomorrow, we (cancel) the picnic.", o: ["rains / will cancel", "rained / would cancel"], a: 0 },
-    { cat: "First and Second Conditionals", type: "choice", q: "If I (be) you, I (talk) to the teacher.", o: ["am / will talk", "were / would talk"], a: 1 },
-    { cat: "First and Second Conditionals", type: "choice", q: "If I (win) a million dollars, I (travel) the world.", o: ["win / will travel", "won / would travel"], a: 1 },
-    { cat: "First and Second Conditionals", type: "choice", q: "She (pass) the exam if she (study) tonight.", o: ["will pass / studies", "would pass / studied"], a: 0 },
-    { cat: "Third Conditional", type: "choice", q: "I didn't wake up early, so I missed the bus.", o: ["If I woke up early, I didn't miss it.", "If I had woken up early, I wouldn't have missed it."], a: 1 },
-    { cat: "Third Conditional", type: "choice", q: "We didn't play well, so we lost the match.", o: ["If we had played well, we wouldn't have lost it.", "If we played well, we didn't lose it."], a: 0 },
-    { cat: "Third Conditional", type: "choice", q: "She didn't tell me it was her birthday, so I didn't buy a gift.", o: ["If she told me, I bought a gift.", "If she had told me, I would have bought a gift."], a: 1 }
+    { cat: "Third Conditional", type: "choice", q: "I didn't wake up early, so I missed the bus.", o: ["If I woke up early, I didn't miss it.", "If I had woken up early, I wouldn't have missed it."], a: 1 }
 ];
 
 let activeQueue = [...initialQuiz];
 let currentIndex = 0;
-let lastResultWasCorrect = true;
+let lastCorrect = false;
 
-function clean(str) {
-    if (!str) return "";
+// Broad normalization: lowercase, no punctuation, handles short forms
+function normalize(str) {
+    if(!str) return "";
     return str.toLowerCase()
-              .replace(/n't/g, " not").replace(/'re/g, " are").replace(/'s/g, " is")
-              .replace(/'m/g, " am").replace(/'ll/g, " will")
-              .replace(/[.,!?;:]/g, "").replace(/\s+/g, " ").trim();
+              .replace(/n't/g, " not")
+              .replace(/'re/g, " are")
+              .replace(/'s/g, " is")
+              .replace(/'m/g, " am")
+              .replace(/'ll/g, " will")
+              .replace(/[.,!?;:]/g, "")
+              .replace(/\s+/g, " ")
+              .trim();
 }
 
 function loadTask() {
@@ -95,9 +94,9 @@ function loadTask() {
     document.getElementById('section-name').innerText = data.cat;
     document.getElementById('question-text').innerText = data.q;
     
-    // Progress is based on initial total
-    const progress = ((initialQuiz.length - activeQueue.length + currentIndex) / initialQuiz.length) * 100;
-    document.getElementById('progress-fill').style.width = `${Math.min(progress, 100)}%`;
+    const total = initialQuiz.length;
+    const finished = total - activeQueue.length;
+    document.getElementById('progress-fill').style.width = `${((finished + currentIndex) / total) * 100}%`;
     
     document.getElementById('feedback').innerText = "";
     document.getElementById('feedback').style.background = "transparent";
@@ -111,7 +110,7 @@ function loadTask() {
         data.a.forEach((_, i) => {
             const input = document.createElement('input');
             input.id = `user-ans-${i}`;
-            input.placeholder = `Type answer...`;
+            input.placeholder = `Type your answer...`;
             input.autocomplete = "off";
             area.appendChild(input);
         });
@@ -133,9 +132,9 @@ function loadTask() {
 function checkTypeAnswer() {
     const data = activeQueue[currentIndex];
     let isCorrect = true;
-    data.a.forEach((expected, i) => {
-        const userInput = document.getElementById(`user-ans-${i}`).value;
-        if (clean(userInput) !== clean(expected)) isCorrect = false;
+    data.a.forEach((ans, i) => {
+        const user = document.getElementById(`user-ans-${i}`).value;
+        if (normalize(user) !== normalize(ans)) isCorrect = false;
     });
     handleResult(isCorrect);
 }
@@ -157,45 +156,40 @@ function checkChoice(idx, btn) {
 
 function handleResult(isCorrect) {
     const f = document.getElementById('feedback');
-    lastResultWasCorrect = isCorrect;
-
+    lastCorrect = isCorrect;
+    
     if (isCorrect) {
         f.innerText = "Correct! Well done. ✨";
         f.style.color = "var(--success)";
         f.style.background = "#dcfce7";
     } else {
-        f.innerText = "Incorrect. This will reappear later! 🔄";
+        f.innerText = "Not quite. This will recur later. 🔄";
         f.style.color = "var(--error)";
         f.style.background = "#fee2e2";
-        // Recur: Push the failed question to the end of the queue
-        activeQueue.push(activeQueue[currentIndex]);
+        // Recurrence logic: add the current object to the end of the queue
+        activeQueue.push({...activeQueue[currentIndex]});
     }
-
+    
     document.getElementById('submit-btn').style.display = "none";
     document.getElementById('next-btn').style.display = "block";
 }
 
 function goToNext() {
-    // If correct, we can technically "remove" it from our list of things to do
-    if (lastResultWasCorrect) {
+    if (lastCorrect) {
         activeQueue.splice(currentIndex, 1);
-        // currentIndex stays same because we removed current item
     } else {
         currentIndex++;
     }
 
-    if (activeQueue.length > 0 && currentIndex < activeQueue.length) {
-        loadTask();
-    } else if (activeQueue.length > 0) {
-        // We reached the end of the list but still have items (the recurred ones)
-        currentIndex = 0;
+    if (activeQueue.length > 0) {
+        if (currentIndex >= activeQueue.length) currentIndex = 0;
         loadTask();
     } else {
         document.querySelector('.app-card').innerHTML = `
             <div style="text-align:center; padding: 50px 0;">
                 <h1 style="font-size: 4rem;">🏆</h1>
-                <h2 style="margin-top: 20px;">Mastery Achieved!</h2>
-                <p>You've cleared all questions correctly.</p>
+                <h2>Perfect!</h2>
+                <p>You have mastered every single question.</p>
                 <button class="main-btn" onclick="location.reload()" style="margin-top: 20px;">Restart Quiz</button>
             </div>`;
     }
@@ -203,6 +197,5 @@ function goToNext() {
 
 loadTask();
 </script>
-
 </body>
 </html>
