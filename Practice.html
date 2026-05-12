@@ -111,3 +111,117 @@ setup();
 
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Past Tense Master</title>
+    <style>
+        :root { --primary: #6366f1; --success: #22c55e; --error: #ef4444; --bg: #f8fafc; --card: #ffffff; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; padding: 20px; }
+        .app-card { background: var(--card); width: 100%; max-width: 450px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 24px; min-height: 420px; display: flex; flex-direction: column; }
+        .progress-bar { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 12px; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; width: 0%; }
+        .label { color: #64748b; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 20px; }
+        .q-text { font-size: 1.2rem; color: #1e293b; font-weight: 600; line-height: 1.6; margin-bottom: 30px; flex-grow: 1; }
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .option-btn { border: 2px solid #f1f5f9; border-radius: 16px; padding: 18px; font-size: 1.05rem; background: #f8fafc; cursor: pointer; transition: all 0.2s ease; text-align: left; font-weight: 500; color: #334155; }
+        .option-btn:active { transform: scale(0.98); }
+        .correct-pick { border-color: var(--success) !important; background: #dcfce7 !important; color: #166534; }
+        .wrong-pick { border-color: var(--error) !important; background: #fee2e2 !important; color: #991b1b; }
+        .feedback { text-align: center; font-weight: 700; height: 24px; margin-bottom: 20px; transition: 0.2s; }
+        .btn-next { background: #1e293b; color: white; border: none; border-radius: 16px; padding: 18px; font-weight: 700; width: 100%; cursor: pointer; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+    <div class="label">Past Simple vs. Past Perfect</div>
+    
+    <div class="q-text" id="question">Loading...</div>
+    
+    <div class="options-grid" id="options"></div>
+
+    <div id="feedback" class="feedback"></div>
+    
+    <button id="next-btn" class="btn-next" onclick="next()">Continue →</button>
+</div>
+
+<script>
+const tasks = [
+    { q: "By the time we arrived at the cinema, the movie...", o: ["started", "had started"], a: 1 },
+    { q: "I didn't have any money because I... my wallet.", o: ["lost", "had lost"], a: 1 },
+    { q: "The teacher was happy because the students...", o: ["studied", "had studied"], a: 1 },
+    { q: "After the guests..., I cleaned the house.", o: ["left", "had left"], a: 1 },
+    { q: "The streets were wet because it... all night.", o: ["rained", "had rained"], a: 1 },
+    { q: "I failed the test because I... my notes at home.", o: ["forgot", "had forgotten"], a: 1 },
+    { q: "When I arrived at the station, the train...", o: ["already left", "had already left"], a: 1 },
+    { q: "He was very tired because he... for 10 hours.", o: ["worked", "had worked"], a: 1 },
+    { q: "I didn't recognize her because she... her hair.", o: ["cut", "had cut"], a: 1 },
+    { q: "They... the movie before, so they knew the ending.", o: ["saw", "had seen"], a: 1 }
+];
+
+let current = 0;
+
+function setup() {
+    const t = tasks[current];
+    document.getElementById('question').innerText = t.q;
+    document.getElementById('progress-fill').style.width = ((current + 1) / tasks.length * 100) + "%";
+    
+    const optionsDiv = document.getElementById('options');
+    optionsDiv.innerHTML = '';
+    
+    t.o.forEach((option, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = option;
+        btn.onclick = () => check(i, btn);
+        optionsDiv.appendChild(btn);
+    });
+    
+    document.getElementById('feedback').innerText = "";
+    document.getElementById('next-btn').style.display = "none";
+}
+
+function check(index, btn) {
+    const t = tasks[current];
+    const feedback = document.getElementById('feedback');
+    const buttons = document.querySelectorAll('.option-btn');
+    
+    buttons.forEach(b => b.style.pointerEvents = 'none');
+
+    if (index === t.a) {
+        btn.classList.add('correct-pick');
+        feedback.innerText = "Correct! ✨";
+        feedback.style.color = "var(--success)";
+    } else {
+        btn.classList.add('wrong-pick');
+        buttons[t.a].classList.add('correct-pick');
+        feedback.innerText = "This happened earlier!";
+        feedback.style.color = "var(--error)";
+    }
+    document.getElementById('next-btn').style.display = "block";
+}
+
+function next() {
+    current++;
+    if (current < tasks.length) {
+        setup();
+    } else {
+        document.querySelector('.app-card').innerHTML = `
+            <div style="text-align:center; padding: 40px 0;">
+                <h1 style="font-size: 3rem; margin: 0;">🎯</h1>
+                <h2 style="color:#1e293b; margin: 20px 0 10px;">10/10 Complete!</h2>
+                <p style="color:#64748b; margin-bottom: 30px;">You are ready for tomorrow's test.</p>
+                <button class="btn-next" style="display:block" onclick="location.reload()">Restart Practice</button>
+            </div>
+        `;
+    }
+}
+
+setup();
+</script>
+</body>
+</html>
