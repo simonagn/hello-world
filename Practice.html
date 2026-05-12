@@ -3,95 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Past Tense Challenge</title>
+    <title>English Grammar Terminal</title>
     <style>
-        :root { --primary: #6366f1; --bg: #f8fafc; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        h1 { color: #1e293b; font-size: 1.5rem; }
-        #game-container { width: 100%; max-width: 400px; perspective: 1000px; margin-top: 20px; }
-        .card { background: white; height: 250px; border-radius: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.6s; transform-style: preserve-3d; position: relative; }
-        .card.is-flipped { transform: rotateY(180deg); }
-        .front, .back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; border-radius: 20px; }
-        .back { background: var(--primary); color: white; transform: rotateY(180deg); font-size: 1.2rem; font-weight: bold; }
-        .sentence { font-size: 1.1rem; color: #334155; line-height: 1.5; }
-        .controls { margin-top: 30px; display: flex; gap: 20px; }
-        button { padding: 12px 25px; border: none; border-radius: 50px; background: white; box-shadow: 0 4px 6px rgba(0,0,0,0.05); font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:active { transform: scale(0.95); }
-        .next-btn { background: var(--primary); color: white; }
-        .progress { margin-top: 15px; font-size: 0.9rem; color: #64748b; }
+        :root { --accent: #00ff41; --bg: #0d0d0d; --text: #e0e0e0; }
+        body { background: var(--bg); color: var(--text); font-family: 'Courier New', Courier, monospace; display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
+        .container { width: 100%; max-width: 500px; }
+        header { border-bottom: 2px solid #333; width: 100%; padding-bottom: 10px; margin-bottom: 20px; text-align: left; }
+        .prompt { color: var(--accent); margin-right: 10px; }
+        .card { background: #1a1a1a; border: 1px solid #333; padding: 20px; border-radius: 5px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .sentence { margin-bottom: 15px; font-size: 1.1rem; line-height: 1.6; }
+        input { background: transparent; border: none; border-bottom: 2px solid var(--accent); color: white; font-family: inherit; font-size: 1.1rem; width: 100%; outline: none; padding: 5px 0; margin-top: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        button { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 8px 15px; cursor: pointer; transition: 0.3s; font-family: inherit; }
+        button:hover { background: var(--accent); color: black; }
+        .feedback { margin-top: 15px; min-height: 20px; font-weight: bold; }
+        .correct { color: var(--accent); }
+        .error { color: #ff4141; }
+        .stats { font-size: 0.8rem; color: #666; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <h1>⚡️ Past Tense Game</h1>
-    <p>Tap the card to see the answer!</p>
+    <div class="container">
+        <header>
+            <div><span class="prompt">admin@grammar:~$</span> run test_prep.sh</div>
+            <div class="stats" id="progress">Progress: 1/10</div>
+        </header>
 
-    <div id="game-container">
-        <div class="card" id="card" onclick="this.classList.toggle('is-flipped')">
-            <div class="front">
-                <p class="sentence" id="sentence">Loading...</p>
-            </div>
-            <div class="back" id="answer">
-                Answer goes here
+        <div class="card">
+            <div class="sentence" id="sentence-display"></div>
+            <span class="prompt">></span><input type="text" id="user-input" placeholder="Type answer(s) here..." autocomplete="off">
+            <div class="feedback" id="feedback"></div>
+            <div class="btn-group">
+                <button onclick="checkAnswer()">SUBMIT</button>
+                <button onclick="nextQuestion()" id="next-btn" style="display:none">NEXT ></button>
             </div>
         </div>
-    </div>
-
-    <div class="progress" id="progress">Card 1 of 10</div>
-
-    <div class="controls">
-        <button onclick="prevCard()">Back</button>
-        <button class="next-btn" onclick="nextCard()">Next Card →</button>
+        
+        <p style="font-size: 0.7rem; color: #444;">Note: Use a slash ( / ) for two-blank answers.</p>
     </div>
 
     <script>
-        const tasks = [
-            { s: "I ____ (read) a book when suddenly the lights ____ (go) out.", a: "was reading / went" },
-            { s: "While the students ____ (write) their essays, the fire alarm ____ (start) to ring.", a: "were writing / started" },
-            { s: "My mother ____ (cook) dinner while my father ____ (wash) the car.", a: "was cooking / was washing" },
-            { s: "When I ____ (arrive) at the party, everyone ____ (dance) and singing.", a: "arrived / was dancing" },
-            { s: "He ____ (break) his leg while he ____ (ski) in the Alps last winter.", a: "broke / was skiing" },
-            { s: "The phone ____ (ring) three times while I ____ (take) a shower.", a: "rang / was taking" },
-            { s: "What ____ (you / do) when the accident ____ (happen)?", a: "were you doing / happened" },
-            { s: "I ____ (not / see) the thief because I ____ (sleep) on the sofa.", a: "didn't see / was sleeping" },
-            { s: "It ____ (begin) to rain just as we ____ (leave) the house.", a: "began / were leaving" },
-            { s: "Yesterday at 7:00 PM, I ____ (eat) dinner with my family.", a: "was eating" }
+        const questions = [
+            { q: "1. I ____ (read) a book when suddenly the lights ____ (go) out.", a: "was reading / went" },
+            { q: "2. While the students ____ (write) their essays, the fire alarm ____ (start) to ring.", a: "were writing / started" },
+            { q: "3. My mother ____ (cook) dinner while my father ____ (wash) the car in the garden.", a: "was cooking / was washing" },
+            { q: "4. When I ____ (arrive) at the party, everyone ____ (dance) and singing.", a: "arrived / was dancing" },
+            { q: "5. He ____ (break) his leg while he ____ (ski) in the Alps last winter.", a: "broke / was skiing" },
+            { q: "6. The phone ____ (ring) three times while I ____ (take) a shower.", a: "rang / was taking" },
+            { q: "7. What ____ (you / do) when the accident ____ (happen)?", a: "were you doing / happened" },
+            { q: "8. I ____ (not / see) the thief because I ____ (sleep) on the sofa.", a: "didn't see / was sleeping" },
+            { q: "9. It ____ (begin) to rain just as we ____ (leave) the house.", a: "began / were leaving" },
+            { q: "10. Yesterday at 7:00 PM, I ____ (eat) dinner with my family, while my phone ____ (ring).", a: "was eating / rang" }
         ];
 
-        let current = 0;
-        const card = document.getElementById('card');
-        const sText = document.getElementById('sentence');
-        const aText = document.getElementById('answer');
-        const pText = document.getElementById('progress');
+        let currentIdx = 0;
 
-        function updateCard() {
-            card.classList.remove('is-flipped');
-            setTimeout(() => {
-                sText.innerText = tasks[current].s;
-                aText.innerText = tasks[current].a;
-                pText.innerText = `Card ${current + 1} of ${tasks.length}`;
-            }, 150);
+        function loadQuestion() {
+            document.getElementById('sentence-display').innerText = questions[currentIdx].q;
+            document.getElementById('user-input').value = "";
+            document.getElementById('feedback').innerText = "";
+            document.getElementById('next-btn').style.display = "none";
+            document.getElementById('progress').innerText = `Progress: ${currentIdx + 1}/10`;
         }
 
-        function nextCard() {
-            if (current < tasks.length - 1) {
-                current++;
-                updateCard();
+        function checkAnswer() {
+            const userVal = document.getElementById('user-input').value.toLowerCase().trim();
+            const correctVal = questions[currentIdx].a.toLowerCase().trim();
+            const feedback = document.getElementById('feedback');
+
+            if (userVal === correctVal) {
+                feedback.innerText = "ACCESS GRANTED: Correct answer.";
+                feedback.className = "feedback correct";
+                document.getElementById('next-btn').style.display = "block";
             } else {
-                alert("Game Finished! Ready for the test?");
-                current = 0;
-                updateCard();
+                feedback.innerText = "ACCESS DENIED: Try again.";
+                feedback.className = "feedback error";
             }
         }
 
-        function prevCard() {
-            if (current > 0) {
-                current--;
-                updateCard();
+        function nextQuestion() {
+            currentIdx++;
+            if (currentIdx < questions.length) {
+                loadQuestion();
+            } else {
+                document.querySelector('.card').innerHTML = "<h2>TEST COMPLETE</h2><p>You are ready for tomorrow!</p><button onclick='location.reload()'>RESTART</button>";
             }
         }
 
-        updateCard();
+        // Allow "Enter" key to submit
+        document.getElementById('user-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkAnswer();
+        });
+
+        loadQuestion();
     </script>
 </body>
 </html>
