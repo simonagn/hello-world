@@ -70,11 +70,11 @@ const quiz = [
     { cat: "Used to vs Past Simple", type: "choice", q: "My father ____ (smoke), but he quit three years ago.", o: ["used to smoke", "smoked"], a: 0 },
     { cat: "Used to vs Past Simple", type: "choice", q: "In 2015, my family ____ (move) to a different city.", o: ["used to move", "moved"], a: 1 },
 
-    // Passive (Typing)
-    { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught by the police"] },
-    { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented by Alexander Graham Bell"] },
-    { cat: "Passive Voice", type: "type", q: "Someone steal my lunch! -> My lunch ____.", a: ["was stolen by someone"] },
-    { cat: "Passive Voice", type: "type", q: "Nowadays we don't use CDs. -> CDs ____.", a: ["aren't used nowadays"] },
+    // Passive (Typing) - Updated with more acceptable variations
+    { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught by the police", "were caught"] },
+    { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented by Alexander Graham Bell", "was invented"] },
+    { cat: "Passive Voice", type: "type", q: "Someone steal my lunch! -> My lunch ____.", a: ["was stolen by someone", "was stolen"] },
+    { cat: "Passive Voice", type: "type", q: "Nowadays we don't use CDs. -> CDs ____.", a: ["aren't used nowadays", "are not used nowadays"] },
 
     // Conditionals (Choosing)
     { cat: "First and Second Conditionals", type: "choice", q: "If it (rain) tomorrow, we (cancel) the picnic.", o: ["rains / will cancel", "rained / would cancel"], a: 0 },
@@ -89,6 +89,16 @@ const quiz = [
 ];
 
 let currentIndex = 0;
+
+// Function to normalize strings: remove punctuation and extra spaces, lowercase everything
+function normalize(str) {
+    return str.toLowerCase().replace(/[.,!?;:]/g, "").replace(/\s+/g, " ").trim();
+}
+
+// Function to handle abbreviations (n't -> not)
+function handleShortForms(str) {
+    return str.replace(/n't\b/g, " not").replace(/'re\b/g, " are").replace(/'s\b/g, " is").replace(/'m\b/g, " am").replace(/'ll\b/g, " will");
+}
 
 function loadTask() {
     const data = quiz[currentIndex];
@@ -128,11 +138,29 @@ function loadTask() {
 
 function checkTypeAnswer() {
     const data = quiz[currentIndex];
-    let correct = true;
-    data.a.forEach((correctVal, i) => {
-        const userVal = document.getElementById(`user-ans-${i}`).value.trim().toLowerCase();
-        if (userVal !== correctVal.toLowerCase()) correct = false;
+    let correct = false;
+    
+    // Check if the user's input matches any of the accepted answers
+    // Normalization handles caps and punctuation
+    // handleShortForms handles n't vs not
+    const userInput = normalize(handleShortForms(document.getElementById(`user-ans-0`).value));
+    
+    data.a.forEach(acceptedAnswer => {
+        if (userInput === normalize(handleShortForms(acceptedAnswer))) {
+            correct = true;
+        }
     });
+
+    // Special logic for multi-blank questions
+    if(data.a.length > 1) {
+        let allBlanks = true;
+        data.a.forEach((ans, i) => {
+             let val = normalize(handleShortForms(document.getElementById(`user-ans-${i}`).value));
+             if (val !== normalize(handleShortForms(ans))) allBlanks = false;
+        });
+        correct = allBlanks;
+    }
+
     showFeedback(correct);
 }
 
@@ -175,7 +203,7 @@ function goToNext() {
             <div style="text-align:center; padding: 50px 0;">
                 <h1 style="font-size: 4rem;">🏆</h1>
                 <h2 style="margin-top: 20px;">Revision Complete!</h2>
-                <p>You have finished all sections. Olvasd a Gyula-t visszafele és tedd azt!</p>
+                <p>You have finished all sections. You're ready for the test!</p>
                 <button class="main-btn" onclick="location.reload()" style="margin-top: 20px;">Restart Quiz</button>
             </div>`;
     }
