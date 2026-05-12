@@ -71,10 +71,10 @@ const quiz = [
     { cat: "Used to vs Past Simple", type: "choice", q: "In 2015, my family ____ (move) to a different city.", o: ["used to move", "moved"], a: 1 },
 
     // Passive (Typing)
-    { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught"] },
-    { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented"] },
-    { cat: "Passive Voice", type: "type", q: "Someone has stolen my lunch! -> My lunch ____.", a: ["has been stolen"] },
-    { cat: "Passive Voice", type: "type", q: "The company will launch a new phone. -> A new phone ____.", a: ["will be launched"] },
+    { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught by the police"] },
+    { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented by Alexander Graham Bell"] },
+    { cat: "Passive Voice", type: "type", q: "Someone steal my lunch! -> My lunch ____.", a: ["was stolen by someone"] },
+    { cat: "Passive Voice", type: "type", q: "Nowadays we don't use CDs. -> CDs ____.", a: ["aren't used nowadays"] },
 
     // Conditionals (Choosing)
     { cat: "First and Second Conditionals", type: "choice", q: "If it (rain) tomorrow, we (cancel) the picnic.", o: ["rains / will cancel", "rained / would cancel"], a: 0 },
@@ -175,7 +175,7 @@ function goToNext() {
             <div style="text-align:center; padding: 50px 0;">
                 <h1 style="font-size: 4rem;">🏆</h1>
                 <h2 style="margin-top: 20px;">Revision Complete!</h2>
-                <p>You have finished all sections. You're ready for the test!</p>
+                <p>You have finished all sections. Olvasd a Gyula-t visszafele és tedd azt!</p>
                 <button class="main-btn" onclick="location.reload()" style="margin-top: 20px;">Restart Quiz</button>
             </div>`;
     }
