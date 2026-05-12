@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete English Revision</title>
+    <style>
+        :root { --primary: #4f46e5; --success: #22c55e; --error: #ef4444; --bg: #f8fafc; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; display: flex; justify-content: center; padding: 20px; color: #1e293b; }
+        .app-card { background: white; width: 100%; max-width: 500px; border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 24px; min-height: 550px; display: flex; flex-direction: column; }
+        .progress-bar { width: 100%; height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 10px; overflow: hidden; }
+        #progress-fill { height: 100%; background: var(--primary); transition: width 0.4s; width: 0%; }
+        .section-tag { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; margin-bottom: 5px; }
+        .q-text { font-size: 1.15rem; font-weight: 600; line-height: 1.5; margin-bottom: 20px; }
+        .interaction { flex-grow: 1; }
+        input { width: 100%; border: 2px solid #e2e8f0; border-radius: 12px; padding: 14px; font-size: 1rem; margin-bottom: 12px; outline: none; box-sizing: border-box; transition: 0.2s; }
+        input:focus { border-color: var(--primary); }
+        .options-grid { display: flex; flex-direction: column; gap: 10px; }
+        .opt-btn { border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; font-size: 1rem; background: white; cursor: pointer; text-align: left; font-weight: 500; transition: 0.2s; }
+        .opt-btn:hover { border-color: var(--primary); }
+        .opt-btn.correct-pick { border-color: var(--success); background: #dcfce7; color: #166534; }
+        .opt-btn.wrong-pick { border-color: var(--error); background: #fee2e2; color: #991b1b; }
+        .feedback { text-align: center; font-weight: 700; min-height: 24px; margin: 20px 0; padding: 10px; border-radius: 8px; }
+        .main-btn { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 18px; font-weight: 700; width: 100%; cursor: pointer; font-size: 1rem; }
+        .main-btn:hover { background: #4338ca; }
+        #next-btn { background: #1e293b; display: none; }
+        #next-btn:hover { background: #0f172a; }
+    </style>
+</head>
+<body>
+
+<div class="app-card">
+    <div class="progress-bar"><div id="progress-fill"></div></div>
+    <div class="section-tag" id="section-name">Grammar</div>
+    <div class="q-text" id="question-text">Loading...</div>
+
+    <div class="interaction" id="interaction-area"></div>
+    <div id="feedback" class="feedback"></div>
+
+    <button id="submit-btn" class="main-btn" onclick="checkTypeAnswer()">Check Answer</button>
+    <button id="next-btn" class="main-btn" onclick="goToNext()">Continue →</button>
+</div>
+
+<script>
+const quiz = [
+    // Past Simple vs Continuous (Typing)
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "I (read) ____ a book when suddenly the lights (go) ____ out.", a: ["was reading", "went"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "While the students (write) ____ their essays, the fire alarm (start) ____ to ring.", a: ["were writing", "started"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "My mother (cook) ____ dinner while my father (wash) ____ the car in the garden.", a: ["was cooking", "was washing"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "When I (arrive) ____ at the party, everyone (dance) ____ and singing.", a: ["arrived", "was dancing"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "He (break) ____ his leg while he (ski) ____ in the Alps last winter.", a: ["broke", "was skiing"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "The phone (ring) ____ three times while I (take) ____ a shower.", a: ["rang", "was taking"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "What (you / do) ____ when the accident (happen) ____?", a: ["were you doing", "happened"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "I (not / see) ____ the thief because I (sleep) ____ on the sofa.", a: ["didn't see", "was sleeping"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "It (begin) ____ to rain just as we (leave) ____ the house.", a: ["began", "were leaving"] },
+    { cat: "Past Simple vs Past Continuous", type: "type", q: "Yesterday at 7:00 PM, I (eat) ____ dinner, while my phone (ring) ____.", a: ["was eating", "rang"] },
+
+    // Past Perfect vs Simple (Choosing)
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "By the time we arrived at the cinema, the movie...", o: ["started", "had started"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "I didn't have any money because I... my wallet.", o: ["lost", "had lost"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "The teacher was happy because the students...", o: ["studied", "had studied"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "After the guests..., I cleaned the house.", o: ["left", "had left"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "The streets were wet because it... all night.", o: ["rained", "had rained"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "I failed the test because I... my notes at home.", o: ["forgot", "had forgotten"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "When I arrived at the station, the train...", o: ["already left", "had already left"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "He was very tired because he... for 10 hours.", o: ["worked", "had worked"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "I didn't recognize her because she... her hair.", o: ["cut", "had cut"], a: 1 },
+    { cat: "Past Perfect vs Past Simple", type: "choice", q: "They... the movie before, so they knew the ending.", o: ["saw", "had seen"], a: 1 },
+
+    // Used to vs Simple (Choosing)
+    { cat: "Used to vs Past Simple", type: "choice", q: "When I was five, I ____ (have) a tricycle, but now I have a bike.", o: ["used to have", "had"], a: 0 },
+    { cat: "Used to vs Past Simple", type: "choice", q: "Last night, I ____ (watch) a documentary about space.", o: ["used to watch", "watched"], a: 1 },
+    { cat: "Used to vs Past Simple", type: "choice", q: "My father ____ (smoke), but he quit three years ago.", o: ["used to smoke", "smoked"], a: 0 },
+    { cat: "Used to vs Past Simple", type: "choice", q: "In 2015, my family ____ (move) to a different city.", o: ["used to move", "moved"], a: 1 },
+
+    // Passive (Typing)
+    { cat: "Passive Voice", type: "type", q: "The police caught the robbers. -> The robbers ____.", a: ["were caught"] },
+    { cat: "Passive Voice", type: "type", q: "Alexander Graham Bell invented the telephone. -> The telephone ____.", a: ["was invented"] },
+    { cat: "Passive Voice", type: "type", q: "Someone has stolen my lunch! -> My lunch ____.", a: ["has been stolen"] },
+    { cat: "Passive Voice", type: "type", q: "The company will launch a new phone. -> A new phone ____.", a: ["will be launched"] },
+
+    // Conditionals (Choosing)
+    { cat: "First and Second Conditionals", type: "choice", q: "If it (rain) tomorrow, we (cancel) the picnic.", o: ["rains / will cancel", "rained / would cancel"], a: 0 },
+    { cat: "First and Second Conditionals", type: "choice", q: "If I (be) you, I (talk) to the teacher.", o: ["am / will talk", "were / would talk"], a: 1 },
+    { cat: "First and Second Conditionals", type: "choice", q: "If I (win) a million dollars, I (travel) the world.", o: ["win / will travel", "won / would travel"], a: 1 },
+    { cat: "First and Second Conditionals", type: "choice", q: "She (pass) the exam if she (study) tonight.", o: ["will pass / studies", "would pass / studied"], a: 0 },
+    
+    // Third Conditionals
+    { cat: "Third Conditional", type: "choice", q: "I didn't wake up early, so I missed the bus.", o: ["If I woke up early, I didn't miss it.", "If I had woken up early, I wouldn't have missed it."], a: 1 },
+    { cat: "Third Conditional", type: "choice", q: "We didn't play well, so we lost the match.", o: ["If we had played well, we wouldn't have lost it.", "If we played well, we didn't lose it."], a: 0 },
+    { cat: "Third Conditional", type: "choice", q: "She didn't tell me it was her birthday, so I didn't buy a gift.", o: ["If she told me, I bought a gift.", "If she had told me, I would have bought a gift."], a: 1 }
+];
+
+let currentIndex = 0;
+
+function loadTask() {
+    const data = quiz[currentIndex];
+    document.getElementById('section-name').innerText = data.cat;
+    document.getElementById('question-text').innerText = data.q;
+    document.getElementById('progress-fill').style.width = `${((currentIndex + 1) / quiz.length) * 100}%`;
+    document.getElementById('feedback').innerText = "";
+    document.getElementById('feedback').style.background = "transparent";
+    document.getElementById('next-btn').style.display = "none";
+    
+    const area = document.getElementById('interaction-area');
+    area.innerHTML = "";
+
+    if (data.type === "type") {
+        document.getElementById('submit-btn').style.display = "block";
+        data.a.forEach((_, i) => {
+            const input = document.createElement('input');
+            input.id = `user-ans-${i}`;
+            input.placeholder = `Type your answer...`;
+            input.autocomplete = "off";
+            area.appendChild(input);
+        });
+    } else {
+        document.getElementById('submit-btn').style.display = "none";
+        const grid = document.createElement('div');
+        grid.className = "options-grid";
+        data.o.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = "opt-btn";
+            btn.innerText = opt;
+            btn.onclick = () => checkChoice(i, btn);
+            grid.appendChild(btn);
+        });
+        area.appendChild(grid);
+    }
+}
+
+function checkTypeAnswer() {
+    const data = quiz[currentIndex];
+    let correct = true;
+    data.a.forEach((correctVal, i) => {
+        const userVal = document.getElementById(`user-ans-${i}`).value.trim().toLowerCase();
+        if (userVal !== correctVal.toLowerCase()) correct = false;
+    });
+    showFeedback(correct);
+}
+
+function checkChoice(idx, btn) {
+    const data = quiz[currentIndex];
+    const btns = document.querySelectorAll('.opt-btn');
+    btns.forEach(b => b.style.pointerEvents = 'none');
+    
+    if (idx === data.a) {
+        btn.classList.add('correct-pick');
+        showFeedback(true);
+    } else {
+        btn.classList.add('wrong-pick');
+        btns[data.a].classList.add('correct-pick');
+        showFeedback(false);
+    }
+}
+
+function showFeedback(isCorrect) {
+    const f = document.getElementById('feedback');
+    if (isCorrect) {
+        f.innerText = "Excellent! ✨";
+        f.style.color = "var(--success)";
+        f.style.background = "#dcfce7";
+    } else {
+        f.innerText = "Check the rules and continue!";
+        f.style.color = "var(--error)";
+        f.style.background = "#fee2e2";
+    }
+    document.getElementById('submit-btn').style.display = "none";
+    document.getElementById('next-btn').style.display = "block";
+}
+
+function goToNext() {
+    currentIndex++;
+    if (currentIndex < quiz.length) {
+        loadTask();
+    } else {
+        document.querySelector('.app-card').innerHTML = `
+            <div style="text-align:center; padding: 50px 0;">
+                <h1 style="font-size: 4rem;">🏆</h1>
+                <h2 style="margin-top: 20px;">Revision Complete!</h2>
+                <p>You have finished all sections. You're ready for the test!</p>
+                <button class="main-btn" onclick="location.reload()" style="margin-top: 20px;">Restart Quiz</button>
+            </div>`;
+    }
+}
+
+loadTask();
+</script>
+
+</body>
+</html>
