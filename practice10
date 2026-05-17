@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESL Intermediate Practice Game</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --success: #2ec4b6;
+            --danger: #e63946;
+            --background: #f8f9fa;
+            --card: #ffffff;
+            --text: #2b2d42;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .card h2 {
+            font-size: 1.1rem;
+            margin-top: 0;
+            color: var(--primary);
+            border-bottom: 1px solid #edf2f4;
+            padding-bottom: 8px;
+        }
+
+        .instruction {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .q-row {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fff;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .btn-opt {
+            background: #edf2f4;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-opt.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .error-card {
+            border-color: var(--danger) !is_important;
+            background-color: #fff5f5;
+        }
+
+        .success-card {
+            border-color: var(--success) !is_important;
+            background-color: #f0fdfa;
+        }
+
+        #submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        #result-msg {
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📝 English Practice Challenge</h1>
+    <div id="result-msg"></div>
+
+    <form id="quiz-form" onsubmit="event.preventDefault(); checkQuiz();">
+        
+        <!-- TASK 1 -->
+        <div class="card" id="card-1">
+            <h2>Task 1: Second Conditional</h2>
+            <p class="instruction">Type your answers. (Abbreviations like 'd or wouldn't are okay!)</p>
+            <div class="q-row">
+                If Oliver <input type="text" id="t1-q1a" placeholder="verb 1" style="width:100px;"> a bear in the woods, he <input type="text" id="t1-q1b" placeholder="verb 2" style="width:130px;"> away.
+            </div>
+            <div class="q-row">
+                I <input type="text" id="t1-q2a" placeholder="verb 1" style="width:130px;"> healthier if I <input type="text" id="t1-q2b" placeholder="verb 2" style="width:100px;"> drinking so much soda.
+            </div>
+        </div>
+
+        <!-- TASK 2 -->
+        <div class="card" id="card-2">
+            <h2>Task 2: For vs Since</h2>
+            <p class="instruction">Choose 'for' or 'since' from the dropdown list.</p>
+            <div class="q-row">
+                We’ve lived here 
+                <select id="t2-q1"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> 
+                we moved to the city in 2018.
+            </div>
+            <div class="q-row">
+                Jonathan’s been a musician 
+                <select id="t2-q2"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> 
+                over a decade.
+            </div>
+        </div>
+
+        <!-- TASK 3 -->
+        <div class="card" id="card-3">
+            <h2>Task 3: Present Perfect or Past Simple</h2>
+            <p class="instruction">Choose the correct tense selection.</p>
+            <div class="q-row">
+                I <strong>(not speak)</strong> to Clara since we graduated.
+                <select id="t3-q1"><option value="">--choose--</option><option value="correct">haven't spoken</option><option value="wrong">didn't speak</option></select>
+            </div>
+            <div class="q-row">
+                Lucas and Sofia <strong>(sell)</strong> their old apartment last month.
+                <select id="t3-q2"><option value="">--choose--</option><option value="wrong">have sold</option><option value="correct">sold</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 4 -->
+        <div class="card" id="card-4">
+            <h2>Task 4: Life Events Collocations</h2>
+            <p class="instruction">Select the verb that correctly fits the phase.</p>
+            <div class="q-row">
+                ____ in love
+                <select id="t4-q1"><option value="">--choose--</option><option value="get">get</option><option value="fall">fall</option><option value="start">start</option></select>
+            </div>
+            <div class="q-row">
+                ____ married
+                <select id="t4-q2"><option value="">--choose--</option><option value="get">get</option><option value="be">be</option><option value="have">have</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 5 -->
+        <div class="card" id="card-5">
+            <h2>Task 5: Odd Word Out</h2>
+            <p class="instruction">Pick the item that does not belong dynamically.</p>
+            <div class="q-row">
+                Group 1: lizard, monkey, tiger, leopard <br>
+                <select id="t5-q1"><option value="">--choose odd word--</option><option value="lizard">lizard</option><option value="monkey">monkey</option><option value="tiger">tiger</option></select>
+            </div>
+            <div class="q-row">
+                Group 2: wolf, cow, deer, lion <br>
+                <select id="t5-q2"><option value="">--choose odd word--</option><option value="wolf">wolf</option><option value="cow">cow</option><option value="deer">deer</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 6 -->
+        <div class="card" id="card-6">
+            <h2>Task 6: Phobia Matching</h2>
+            <p class="instruction">Match the matching word to the definition context.</p>
+            <div class="q-row">
+                Thomas never goes into deep water. He has a severe _____ of drowning.
+                <select id="t6-q1"><option value="">--choose--</option><option value="fear">fear</option><option value="phobia">phobia</option><option value="panic">panic</option></select>
+            </div>
+            <div class="q-row">
+                I can’t look out of the window from the 10th floor. I’m scared of _____.
+                <select id="t6-q2"><option value="">--choose--</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 7 -->
+        <div class="card" id="card-7">
+            <h2>Task 7: Phrase Structure Order</h2>
+            <p class="instruction">Pick the grammatically accurate word order choice.</p>
+            <div class="q-row">
+                The baby is sleeping, so please don't...
+                <select id="t7-q1"><option value="">--choose--</option><option value="wrong">wake up her</option><option value="correct">wake her up</option></select>
+            </div>
+            <div class="q-row">
+                What time do... on Sunday mornings?
+                <select id="t7-q2"><option value="">--choose--</option><option value="correct">you get up</option><option value="wrong">get you up</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 8 -->
+        <div class="card" id="card-8">
+            <h2>Task 8: Spatial Prepositions</h2>
+            <p class="instruction">Pick the proper path descriptor option.</p>
+            <div class="q-row">
+                Liam walked _____ the bank to get some cash from the machine.
+                <select id="t8-q1"><option value="">--choose--</option><option value="into">into</option><option value="past">past</option><option value="through">through</option></select>
+            </div>
+            <div class="q-row">
+                The weather is terrible outside. Why don't you come _____?
+                <select id="t8-q2"><option value="">--choose--</option><option value="in">in</option><option value="out">out</option><option value="away">away</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 9 -->
+        <div class="card" id="card-9">
+            <h2>Task 9: Active to Passive Voice Rewrite</h2>
+            <p class="instruction">Finish typing the sentence transformation logic safely.</p>
+            <div class="q-row">
+                <strong>Active:</strong> Millions of people drink green tea.<br>
+                <strong>Passive:</strong> Green tea <input type="text" id="t9-q1" placeholder="complete sentence portion...">
+            </div>
+            <div class="q-row">
+                <strong>Active:</strong> A local artist painted the restaurant walls.<br>
+                <strong>Passive:</strong> The restaurant walls <input type="text" id="t9-q2" placeholder="complete sentence portion...">
+            </div>
+        </div>
+
+        <!-- TASK 10 -->
+        <div class="card" id="card-10">
+            <h2>Task 10: Phrasal Verbs Particles</h2>
+            <p class="instruction">Type the functional grammar context preposition modifier missing.</p>
+            <div class="q-row">
+                The class will be <input type="text" id="t10-q1" style="width:80px;" placeholder="over?"> at 3:00 PM, and then you can leave.
+            </div>
+            <div class="q-row">
+                Your clothes are all over the floor. Please put them <input type="text" id="t10-q2" style="width:80px;" placeholder="away?">.
+            </div>
+        </div>
+
+        <!-- TASK 11 -->
+        <div class="card" id="card-11">
+            <h2>Task 11: Sports Matching Definition</h2>
+            <p class="instruction">Match the description details directly to the field game tag context.</p>
+            <div class="q-row">
+                You use a club to hit a tiny ball across a green field into a hole.
+                <select id="t11-q1"><option value="">--choose--</option><option value="golf">golf</option><option value="rugby">rugby</option><option value="basketball">basketball</option></select>
+            </div>
+            <div class="q-row">
+                You run with an oval ball and throw it backward to your teammates.
+                <select id="t11-q2"><option value="">--choose--</option><option value="skiing">skiing</option><option value="rugby">rugby</option><option value="windsurfing">windsurfing</option></select>
+            </div>
+        </div>
+
+        <!-- TASK 12 -->
+        <div class="card" id="card-12">
+            <h2>Task 12: Vocabulary Selection Context</h2>
+            <p class="instruction">Select the best fits semantic word option indicator.</p>
+            <div class="q-row">
+                The coffee served in this cafe is _____ in Colombia.
+                <select id="t12-q1"><option value="">--choose--</option><option value="created">created</option><option value="discovered">discovered</option><option value="produced">produced</option></select>
+            </div>
+            <div class="q-row">
+                When was penicillin _____ by Alexander Fleming?
+                <select id="t12-q2"><option value="">--choose--</option><option value="discovered">discovered</option><option value="used">used</option><option value="designed">designed</option></select>
+            </div>
+        </div>
+
+        <button type="submit" id="submit-btn">Check Answers</button>
+    </form>
+</div>
+
+<script>
+    function clean(str) {
+        return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
+    }
+
+    function checkQuiz() {
+        let errorCount = 0;
+        
+        // Reset Card States
+        for (let i = 1; i <= 12; i++) {
+            document.getElementById(`card-${i}`).classList.remove('error-card', 'success-card');
+        }
+
+        // T1 Check
+        let t1_q1a = clean(document.getElementById('t1-q1a').value);
+        let t1_q1b = clean(document.getElementById('t1-q1b').value);
+        let t1_q2a = clean(document.getElementById('t1-q2a').value);
+        let t1_q2b = clean(document.getElementById('t1-q2b').value);
+        
+        if (t1_q1a !== 'saw' || (t1_q1b !== 'would scream' && t1_q1b !== "'d scream") || 
+            (t1_q2a !== 'would feel' && t1_q2a !== "'d feel") || t1_q2b !== 'stopped') {
+            document.getElementById('card-1').classList.add('error-card');
+            errorCount++;
+        } else { document.getElementById('card-1').classList.add('success-card'); }
+
+        // T2 Check
+        if (document.getElementById('t2-q1').value !== 'since' || document.getElementById('t2-q2').value !== 'for') {
+            document.getElementById('card-2').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-2').classList.add('success-card'); }
+
+        // T3 Check
+        if (document.getElementById('t3-q1').value !== 'correct' || document.getElementById('t3-q2').value !== 'correct') {
+            document.getElementById('card-3').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-3').classList.add('success-card'); }
+
+        // T4 Check
+        if (document.getElementById('t4-q1').value !== 'fall' || document.getElementById('t4-q2').value !== 'get') {
+            document.getElementById('card-4').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-4').classList.add('success-card'); }
+
+        // T5 Check
+        if (document.getElementById('t5-q1').value !== 'lizard' || document.getElementById('t5-q2').value !== 'cow') {
+            document.getElementById('card-5').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-5').classList.add('success-card'); }
+
+        // T6 Check
+        if (document.getElementById('t6-q1').value !== 'fear' || document.getElementById('t6-q2').value !== 'heights') {
+            document.getElementById('card-6').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-6').classList.add('success-card'); }
+
+        // T7 Check
+        if (document.getElementById('t7-q1').value !== 'correct' || document.getElementById('t7-q2').value !== 'correct') {
+            document.getElementById('card-7').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-7').classList.add('success-card'); }
+
+        // T8 Check
+        if (document.getElementById('t8-q1').value !== 'into' || document.getElementById('t8-q2').value !== 'in') {
+            document.getElementById('card-8').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-8').classList.add('success-card'); }
+
+        // T9 Check (Passive Transformation Strings)
+        let t9_q1 = clean(document.getElementById('t9-q1').value);
+        let t9_q2 = clean(document.getElementById('t9-q2').value);
+        if (t9_q1 !== 'is spoken by millions of people' || t9_q2 !== 'were decorated by a local artist') {
+            document.getElementById('card-9').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-9').classList.add('success-card'); }
+
+        // T10 Check
+        if (clean(document.getElementById('t10-q1').value) !== 'over' || clean(document.getElementById('t10-q2').value) !== 'away') {
+            document.getElementById('card-10').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-10').classList.add('success-card'); }
+
+        // T11 Check
+        if (document.getElementById('t11-q1').value !== 'golf' || document.getElementById('t11-q2').value !== 'rugby') {
+            document.getElementById('card-11').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-11').classList.add('success-card'); }
+
+        // T12 Check
+        if (document.getElementById('t12-q1').value !== 'produced' || document.getElementById('t12-q2').value !== 'discovered') {
+            document.getElementById('card-12').classList.add('error-card'); errorCount++;
+        } else { document.getElementById('card-12').classList.add('success-card'); }
+
+        // Global Window Messaging Display Handle
+        let msgBox = document.getElementById('result-msg');
+        if (errorCount > 0) {
+            msgBox.style.display = "block";
+            msgBox.style.backgroundColor = "var(--danger)";
+            msgBox.style.color = "white";
+            msgBox.innerHTML = `❌ You have errors in ${errorCount} task(s). Review the red panels and try again!`;
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        } else {
+            msgBox.style.display = "block";
+            msgBox.style.backgroundColor = "var(--success)";
+            msgBox.style.color = "white";
+            msgBox.innerHTML = "🎉 Incredible job! Everything is 100% Correct!";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    }
+</script>
+</body>
+</html>
