@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESL Intermediate Practice Game</title>
+    <title>ESL Interactive Practice App</title>
     <style>
         :root {
             --primary: #4a6fa5;
@@ -12,446 +12,461 @@
             --background: #f8f9fa;
             --card: #ffffff;
             --text: #2b2d42;
-            --example-bg: #f1f5f9;
-            --example-border: #cbd5e1;
+            --example-bg: #e2e8f0;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--background);
             color: var(--text);
             margin: 0;
-            padding: 15px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            min-height: 100vh;
         }
 
-        .container {
+        .app-container {
             width: 100%;
-            max-width: 550px;
+            max-width: 500px;
+            margin-top: 10px;
         }
 
-        h1 {
-            text-align: center;
+        .nav-header {
+            background: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        select.task-selector {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.85rem;
+            background-color: #fff;
             color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-weight: bold;
         }
 
         .card {
             background: var(--card);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 2px solid transparent;
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border: 2px solid #e2e8f0;
+            min-height: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .card h2 {
+        h2 {
             font-size: 1.1rem;
-            margin-top: 0;
             color: var(--primary);
-            border-bottom: 1px solid #edf2f4;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
+            margin: 0 0 4px 0;
         }
 
         .instruction {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 12px;
+            font-size: 0.8rem;
+            color: #64748b;
+            margin: 0 0 12px 0;
             font-style: italic;
         }
 
         .example-box {
-            background-color: var(--example-bg);
-            border-left: 4px solid var(--example-border);
-            padding: 10px 12px;
-            font-size: 0.9rem;
-            border-radius: 4px;
+            background: var(--example-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #334155;
+            margin-bottom: 15px;
+            border-left: 4px solid #94a3b8;
+        }
+
+        .question-box {
+            font-size: 1.05rem;
+            line-height: 1.6;
             margin-bottom: 20px;
-            color: #475569;
+            flex-grow: 1;
         }
 
-        .example-box strong {
-            color: #1e293b;
-        }
-
-        .q-row {
-            margin-bottom: 18px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        input[type="text"] {
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-        }
-
-        .full-width-input {
-            width: 100%;
-            margin-top: 6px;
-        }
-
-        select {
-            padding: 6px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 0.95rem;
-            background-color: #fff;
-            max-width: 100%;
-        }
-
-        .error-card {
-            border-color: var(--danger) !important;
-            background-color: #fff5f5;
-        }
-
-        .success-card {
-            border-color: var(--success) !important;
-            background-color: #f0fdfa;
-        }
-
-        #submit-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 15px;
+        input[type="text"], select.answer-select {
+            padding: 10px;
+            border: 2px solid #cbd5e1;
             border-radius: 8px;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 8px;
+            background-color: #fff;
+        }
+
+        input.inline-input {
+            width: 120px;
+            display: inline-block;
+            margin: 0 4px;
+            padding: 6px;
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .feedback-wrong {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fca5a5;
+        }
+
+        .action-btns {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
+            transition: all 0.2s;
         }
 
-        #result-msg {
-            text-align: center;
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            padding: 15px;
-            border-radius: 8px;
-            display: none;
+        .btn-check {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-next {
+            background-color: #475569;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📝 English Practice Challenge</h1>
-    <div id="result-msg"></div>
+<div class="app-container">
+    <!-- TOP NAVIGATION HEADER -->
+    <div class="nav-header">
+        <div class="nav-row">
+            <span class="progress-text" id="progress-indicator">Question 1 of 80</span>
+            <select class="task-selector" id="jump-task" onchange="jumpToTask(this.value)">
+                <option value="0">Task 1: 2nd Conditional</option>
+                <option value="8">Task 2: For vs Since</option>
+                <option value="13">Task 3: Present Perfect / Past Simple</option>
+                <option value="20">Task 4: Life Events</option>
+                <option value="28">Task 5: Odd Word Out</option>
+                <option value="34">Task 6: Phobia Matching</option>
+                <option value="40">Task 7: Phrasal Word Order</option>
+                <option value="46">Task 8: Prepositions</option>
+                <option value="54">Task 9: Active to Passive</option>
+                <option value="62">Task 10: Phrasal Particles</option>
+                <option value="69">Task 11: Sports Matching</option>
+                <option value="75">Task 12: Vocabulary Choice</option>
+            </select>
+        </div>
+    </div>
 
-    <form id="quiz-form" onsubmit="event.preventDefault(); checkQuiz();">
-        
-        <!-- TASK 1 -->
-        <div class="card" id="card-1">
-            <h2>Task 1: Second Conditional</h2>
-            <p class="instruction">Type the correct second conditional forms of the two verbs provided in the brackets.</p>
-            <div class="example-box">
-                <strong>Example:</strong> If I <u>won</u> the lottery, I <u>would buy</u> a house. (win / buy)
+    <!-- DYNAMIC CORE APP CARD -->
+    <div class="card">
+        <div>
+            <h2 id="task-title">Loading Task...</h2>
+            <p class="instruction" id="task-instruction">Instruction</p>
+            <div class="example-box" id="task-example">Example</div>
+            
+            <div class="question-box" id="question-content">
+                <!-- Loaded dynamically by Javascript -->
             </div>
-            <div class="q-row">1. If Oliver <input type="text" id="t1-q1a" style="width:90px;"> a bear in the woods, he <input type="text" id="t1-q1b" style="width:120px;"> away. (see / run)</div>
-            <div class="q-row">2. I <input type="text" id="t1-q2a" style="width:120px;"> healthier if I <input type="text" id="t1-q2b" style="width:90px;"> drinking so much soda. (feel / stop)</div>
-            <div class="q-row">3. You <input type="text" id="t1-q3a" style="width:130px;"> sunburned if you <input type="text" id="t1-q3b" style="width:90px;"> the sunscreen I gave you. (not get / use)</div>
-            <div class="q-row">4. If Elena <input type="text" id="t1-q4a" style="width:90px;"> more, she <input type="text" id="t1-q4b" style="width:120px;"> into the music academy. (practice / get)</div>
-            <div class="q-row">5. I <input type="text" id="t1-q5a" style="width:120px;"> the spicy food if I <input type="text" id="t1-q5b" style="width:90px;"> Marcus. (try / be)</div>
-            <div class="q-row">6. If Nicole <input type="text" id="t1-q6a" style="width:110px;"> work late, she <input type="text" id="t1-q6b" style="width:120px;"> to the dinner party tonight. (not have to / come)</div>
-            <div class="q-row">7. The coach <input type="text" id="t1-q7a" style="width:120px;"> angry if the team <input type="text" id="t1-q7b" style="width:110px;"> today. (be / not train)</div>
-            <div class="q-row">8. If I <input type="text" id="t1-q8a" style="width:110px;"> a car, I <input type="text" id="t1-q8b" style="width:120px;"> my bike to work. (not have / ride)</div>
         </div>
 
-        <!-- TASK 2 -->
-        <div class="card" id="card-2">
-            <h2>Task 2: For vs Since</h2>
-            <p class="instruction">Select 'for' or 'since' to complete the sentences.</p>
-            <div class="example-box">
-                <strong>Example:</strong> They have been married <u>since</u> 2015 / <u>for</u> 10 years.
+        <div>
+            <div class="feedback-box" id="feedback-display"></div>
+            
+            <div class="action-btns">
+                <button class="btn-check" id="check-btn" onclick="verifyCurrentAnswer()">Check Answer</button>
+                <button class="btn-next" id="next-btn" onclick="nextQuestion()" disabled>Next ➔</button>
             </div>
-            <div class="q-row">1. We’ve lived in this apartment <select id="t2-q1"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> we moved to the city in 2018.</div>
-            <div class="q-row">2. Jonathan’s been a professional musician <select id="t2-q2"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> over a decade.</div>
-            <div class="q-row">3. The electricity hasn't worked <select id="t2-q3"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> Tuesday morning.</div>
-            <div class="q-row">4. Mr. Davis has been in the meeting <select id="t2-q4"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> 9 o'clock.</div>
-            <div class="q-row">5. Our family has owned this farm <select id="t2-q5"><option value="">--choose--</option><option value="for">for</option><option value="since">since</option></select> many generations.</div>
         </div>
-
-        <!-- TASK 3 -->
-        <div class="card" id="card-3">
-            <h2>Task 3: Present Perfect or Past Simple</h2>
-            <p class="instruction">Choose the correct tense based on the context clues.</p>
-            <div class="example-box">
-                <strong>Example:</strong> I <u>visited</u> Paris last year. / I <u>have visited</u> Paris twice before.
-            </div>
-            <div class="q-row">1. I <strong>(not speak)</strong> to Clara since we graduated from college. <select id="t3-q1"><option value="">--choose--</option><option value="correct">haven't spoken</option><option value="wrong">didn't speak</option></select></div>
-            <div class="q-row">2. My mother <strong>(not learn)</strong> German when she was at school. <select id="t3-q2"><option value="">--choose--</option><option value="wrong">hasn't learned</option><option value="correct">didn't learn</option></select></div>
-            <div class="q-row">3. David <strong>(work)</strong> at this studio for five years. He really enjoys it. <select id="t3-q3"><option value="">--choose--</option><option value="correct">has worked</option><option value="wrong">worked</option></select></div>
-            <div class="q-row">4. They <strong>(not send)</strong> me an invitation yesterday. <select id="t3-q4"><option value="">--choose--</option><option value="wrong">haven't sent</option><option value="correct">didn't send</option></select></div>
-            <div class="q-row">5. What time <strong>(arrive)</strong> the train this afternoon? <select id="t3-q5"><option value="">--choose--</option><option value="correct">did the train arrive</option><option value="wrong">has the train arrived</option></select></div>
-            <div class="q-row">6. Lucas and Sofia <strong>(sell)</strong> their old apartment last month. <select id="t3-q6"><option value="">--choose--</option><option value="wrong">have sold</option><option value="correct">sold</option></select></div>
-            <div class="q-row">7. "How long know your best friend?" "Since primary school." <select id="t3-q7"><option value="">--choose--</option><option value="correct">have you known</option><option value="wrong">did you know</option></select></div>
-        </div>
-
-        <!-- TASK 4 -->
-        <div class="card" id="card-4">
-            <h2>Task 4: Life Events Collocations</h2>
-            <p class="instruction">Pick the correct verb that completes the standard life event phrase.</p>
-            <div class="example-box">
-                <strong>Example:</strong> <u>go</u> to university
-            </div>
-            <div class="q-row">1. ____ born <select id="t4-q1"><option value="">--choose--</option><option value="be">be</option><option value="get">get</option></select></div>
-            <div class="q-row">2. ____ a baby <select id="t4-q2"><option value="">--choose--</option><option value="have">have</option><option value="get">get</option></select></div>
-            <div class="q-row">3. ____ a new business <select id="t4-q3"><option value="">--choose--</option><option value="start">start</option><option value="go">go</option></select></div>
-            <div class="q-row">4. ____ to primary school <select id="t4-q4"><option value="">--choose--</option><option value="go">go</option><option value="be">be</option></select></div>
-            <div class="q-row">5. ____ in love <select id="t4-q5"><option value="">--choose--</option><option value="fall">fall</option><option value="start">start</option></select></div>
-            <div class="q-row">6. ____ divorced <select id="t4-q6"><option value="">--choose--</option><option value="get">get</option><option value="have">have</option></select></div>
-            <div class="q-row">7. ____ married <select id="t4-q7"><option value="">--choose--</option><option value="get">get</option><option value="be">be</option></select></div>
-            <div class="q-row">8. ____ from teaching <select id="t4-q8"><option value="">--choose--</option><option value="retire">retire</option><option value="go">go</option></select></div>
-        </div>
-
-        <!-- TASK 5 -->
-        <div class="card" id="card-5">
-            <h2>Task 5: Underline the Odd Word Out</h2>
-            <p class="instruction">Select the item that does not match the category of the other words.</p>
-            <div class="example-box">
-                <strong>Example:</strong> apple / banana / <u>chicken</u> / orange (chicken is not a fruit)
-            </div>
-            <div class="q-row">1. lizard / monkey / tiger / leopard <select id="t5-q1"><option value="">--choose--</option><option value="lizard">lizard</option><option value="monkey">monkey</option><option value="tiger">tiger</option><option value="leopard">leopard</option></select></div>
-            <div class="q-row">2. wolf / cow / deer / lion <select id="t5-q2"><option value="">--choose--</option><option value="wolf">wolf</option><option value="cow">cow</option><option value="deer">deer</option><option value="lion">lion</option></select></div>
-            <div class="q-row">3. donkey / sheep / hen / kangaroo <select id="t5-q3"><option value="">--choose--</option><option value="donkey">donkey</option><option value="sheep">sheep</option><option value="hen">hen</option><option value="kangaroo">kangaroo</option></select></div>
-            <div class="q-row">4. hamster / squirrel / eagle / cat <select id="t5-q4"><option value="">--choose--</option><option value="hamster">hamster</option><option value="squirrel">squirrel</option><option value="eagle">eagle</option><option value="cat">cat</option></select></div>
-            <div class="q-row">5. horse / owl / bat / pigeon <select id="t5-q5"><option value="">--choose--</option><option value="horse">horse</option><option value="owl">owl</option><option value="bat">bat</option><option value="pigeon">pigeon</option></select></div>
-            <div class="q-row">6. ant / wasp / dragonfly / frog <select id="t5-q6"><option value="">--choose--</option><option value="ant">ant</option><option value="wasp">wasp</option><option value="dragonfly">dragonfly</option><option value="frog">frog</option></select></div>
-        </div>
-
-        <!-- TASK 6 -->
-        <div class="card" id="card-6">
-            <h2>Task 6: Phobia Sentence Matching</h2>
-            <p class="instruction">Choose the vocabulary word that best fits the meaning of the context clue sentence.</p>
-            <div class="example-box">
-                <strong>Example:</strong> He hates spiders; he has an intense <u>phobia</u> of them.
-            </div>
-            <div class="q-row">1. Thomas never goes into deep water. He has a severe _____ of drowning. <select id="t6-q1"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-            <div class="q-row">2. When the lights went out, she started to _____ and look for the door. <select id="t6-q2"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-            <div class="q-row">3. I can’t look out of the window from the tenth floor. I’m scared of _____. <select id="t6-q3"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-            <div class="q-row">4. As a firefighter, I regularly help people who are _____ of the smoke. <select id="t6-q4"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-            <div class="q-row">5. Maya hates public speaking. She _____ from a phobia of large crowds. <select id="t6-q5"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-            <div class="q-row">6. My younger brother has a _____ of thunderstorms. <select id="t6-q6"><option value="">--choose--</option><option value="phobia">phobia</option><option value="panic">panic</option><option value="heights">heights</option><option value="frightened">frightened</option><option value="suffers">suffers</option><option value="fear">fear</option></select></div>
-        </div>
-
-        <!-- TASK 7 -->
-        <div class="card" id="card-7">
-            <h2>Task 7: Word Order Multiple Choice</h2>
-            <p class="instruction">Choose the option that places the phrasal verb parts and pronouns in the correct order.</p>
-            <div class="example-box">
-                <strong>Example:</strong> Take your shoes off $\rightarrow$ Please <u>take them off</u>.
-            </div>
-            <div class="q-row">1. The baby is sleeping, so please don't... <select id="t7-q1"><option value="">--choose--</option><option value="wrong">wake up her</option><option value="correct">wake her up</option></select></div>
-            <div class="q-row">2. What time do... on Sunday mornings? <select id="t7-q2"><option value="">--choose--</option><option value="correct">you get up</option><option value="wrong">get you up</option></select></div>
-            <div class="q-row">3. "I can't read this sign without my contacts." "Well, put..." <select id="t7-q3"><option value="">--choose--</option><option value="wrong">on them</option><option value="correct">them on</option></select></div>
-            <div class="q-row">4. "The music is too loud." "Why don't you turn..., then?" <select id="t7-q4"><option value="">--choose--</option><option value="wrong">down it</option><option value="correct">it down</option></select></div>
-            <div class="q-row">5. Hey, can you... from the airport at midnight? <select id="t7-q5"><option value="">--choose--</option><option value="correct">pick us up</option><option value="wrong">pick up us</option></select></div>
-            <div class="q-row">6. "What is she looking for?" "She’s..." <select id="t7-q6"><option value="">--choose--</option><option value="correct">looking for her keys</option><option value="wrong">looking her keys for</option></select></div>
-        </div>
-
-        <!-- TASK 8 -->
-        <div class="card" id="card-8">
-            <h2>Task 8: Pick the Correct Word</h2>
-            <p class="instruction">Select the correct directional preposition for movement.</p>
-            <div class="example-box">
-                <strong>Example:</strong> We walked <u>through</u> the door and into the classroom.
-            </div>
-            <div class="q-row">1. Liam walked <select id="t8-q1"><option value="">--choose--</option><option value="past">past</option><option value="into">into</option><option value="through">through</option></select> the bank to get some cash from the machine.</div>
-            <div class="q-row">2. The weather is terrible outside. Why don't you come <select id="t8-q2"><option value="">--choose--</option><option value="out">out</option><option value="away">away</option><option value="in">in</select>?</div>
-            <div class="q-row">3. We took great pictures as the helicopter flew <select id="t8-q3"><option value="">--choose--</option><option value="over">over</option><option value="onto">onto</option><option value="along">along</option></select> the grand canyon.</div>
-            <div class="q-row">4. Rachel saw her friend as she was driving <select id="t8-q4"><option value="">--choose--</option><option value="under">under</option><option value="along">along</option><option value="around">around</option></select> the main road.</div>
-            <div class="q-row">5. Please don't run <select id="t8-q5"><option value="">--choose--</option><option value="across">across</option><option value="along">along</option><option value="down">down</option></select> the escalator, you might fall over.</div>
-            <div class="q-row">6. Every morning, I walk <select id="t8-q6"><option value="">--choose--</option><option value="past">past</option><option value="out">out</option><option value="into">into</option></select> the bakery and smell the fresh bread.</div>
-            <div class="q-row">7. We had to turn <select id="t8-q7"><option value="">--choose--</option><option value="over">over</option><option value="round">round</option><option value="out">out</option></select> because we realized we missed our exit.</div>
-            <div class="q-row">8. The most scenic route is to walk <select id="t8-q8"><option value="">--choose--</option><option value="through">through</option><option value="into">into</option><option value="over">over</option></select> the old forest.</div>
-        </div>
-
-        <!-- TASK 9 -->
-        <div class="card" id="card-9">
-            <h2>Task 9: Active to Passive Voice Rewrite</h2>
-            <p class="instruction">Type the missing phrase to transform the active sentence into the passive voice.</p>
-            <div class="example-box">
-                <strong>Example:</strong> Shakespeare wrote Hamlet. $\rightarrow$ Hamlet <u>was written by Shakespeare</u>.
-            </div>
-            <div class="q-row">1. Millions of people drink green tea.<br><strong>Passive:</strong> Green tea <input type="text" id="t9-q1" class="full-width-input" placeholder="is spoken by millions of people..."></div>
-            <div class="q-row">2. A local artist painted the restaurant walls.<br><strong>Passive:</strong> The restaurant walls <input type="text" id="t9-q2" class="full-width-input" placeholder="were decorated by a local artist..."></div>
-            <div class="q-row">3. The assistants don't clean the kitchen.<br><strong>Passive:</strong> The kitchen <input type="text" id="t9-q3" class="full-width-input" placeholder="isn't done by the assistants..."></div>
-            <div class="q-row">4. The manager didn't sign these contracts.<br><strong>Passive:</strong> These contracts <input type="text" id="t9-q4" class="full-width-input" placeholder="weren't signed by the manager..."></div>
-            <div class="q-row">5. Heavy traffic pollutes the city air.<br><strong>Passive:</strong> The city air <input type="text" id="t9-q5" class="full-width-input" placeholder="is polluted by heavy traffic..."></div>
-            <div class="q-row">6. Our team won the championship trophy.<br><strong>Passive:</strong> The championship trophy <input type="text" id="t9-q6" class="full-width-input" placeholder="was won by our team..."></div>
-            <div class="q-row">7. Tim Berners-Lee invented the World Wide Web.<br><strong>Passive:</strong> The World Wide Web <input type="text" id="t9-q7" class="full-width-input" placeholder="was invented by tim berners-lee..."></div>
-            <div class="q-row">8. Mrs. Green doesn't teach history.<br><strong>Passive:</strong> History <input type="text" id="t9-q8" class="full-width-input" placeholder="isn't taught by mrs green..."></div>
-        </div>
-
-        <!-- TASK 10 -->
-        <div class="card" id="card-10">
-            <h2>Task 10: Complete Phrasal Verbs Particles</h2>
-            <p class="instruction">Type the missing preposition particle (e.g., up, out, off, down, away) to complete the phrasal verb.</p>
-            <div class="example-box">
-                <strong>Example:</strong> Please turn <u>off</u> the light so I can sleep.
-            </div>
-            <div class="q-row">1. The class will be <input type="text" id="t10-q1" style="width:70px;"> at 3:00 PM, and then you can leave.</div>
-            <div class="q-row">2. Your clothes are all over the floor. Please put them <input type="text" id="t10-q2" style="width:70px;">.</div>
-            <div class="q-row">3. Turn the heater <input type="text" id="t10-q3" style="width:70px;">. It's freezing in this room.</div>
-            <div class="q-row">4. How did the teacher find <input type="text" id="t10-q4" style="width:70px;"> about the secret party?</div>
-            <div class="q-row">5. Arthur gets <input type="text" id="t10-q5" style="width:70px;"> well with his coworkers; they love him.</div>
-            <div class="q-row">6. I am filling <input type="text" id="t10-q6" style="width:70px;"> the application form for my passport.</div>
-            <div class="q-row">7. If you don't know the meaning of the word, look it <input type="text" id="t10-q7" style="width:70px;"> in the dictionary.</div>
-        </div>
-
-        <!-- TASK 11 -->
-        <div class="card" id="card-11">
-            <h2>Task 11: Match Sports Sentences</h2>
-            <p class="instruction">Choose the sport matching the descriptive text clue statement.</p>
-            <div class="example-box">
-                <strong>Example:</strong> You kick a round ball into a large net $\rightarrow$ <u>football</u>
-            </div>
-            <div class="q-row">1. You use a club to hit a tiny ball across a green field into a hole. <select id="t11-q1"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-            <div class="q-row">2. You run with an oval ball and throw it backward to your teammates. <select id="t11-q2"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-            <div class="q-row">3. You bounce a ball and run across a court to throw it into a net. <select id="t11-q3"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-            <div class="q-row">4. You travel fast down snow-covered hills on two long planks. <select id="t11-q4"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-            <div class="q-row">5. You hold onto a sail attached to a board and ride the ocean waves. <select id="t11-q5"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-            <div class="q-row">6. You wear a helmet and use pedals to move two wheels fast on a track. <select id="t11-q6"><option value="">--choose--</option><option value="basketball">basketball</option><option value="cycling">cycling</option><option value="golf">golf</option><option value="motor racing">motor racing</option><option value="rugby">rugby</option><option value="skiing">skiing</option><option value="windsurfing">windsurfing</option></select></div>
-        </div>
-
-        <!-- TASK 12 -->
-        <div class="card" id="card-12">
-            <h2>Task 12: Pick the Right Word Multiple Choice</h2>
-            <p class="instruction">Choose the correct vocabulary verb that semantically satisfies the sentence sentence.</p>
-            <div class="example-box">
-                <strong>Example:</strong> The telephone was <u>invented</u> by Alexander Graham Bell.
-            </div>
-            <div class="q-row">1. The coffee served in this cafe is... in Colombia. <select id="t12-q1"><option value="">--choose--</option><option value="created">created</option><option value="discovered">discovered</option><option value="produced">produced</option></select></div>
-            <div class="q-row">2. When was penicillin... by Alexander Fleming? <select id="t12-q2"><option value="">--choose--</option><option value="discovered">discovered</option><option value="used">used</option><option value="designed">designed</option></select></div>
-            <div class="q-row">3. The classic movie Psycho was... by Alfred Hitchcock. <select id="t12-q3"><option value="">--choose--</option><option value="directed">directed</option><option value="played">played</option><option value="invented">invented</option></select></div>
-            <div class="q-row">4. The ceiling of the Sistine Chapel was... by Michelangelo. <select id="t12-q4"><option value="">--choose--</option><option value="played">played</option><option value="called">called</option><option value="painted">painted</option></select></div>
-            <div class="q-row">5. The TV series Sherlock is... on the books by Arthur Conan Doyle. <select id="t12-q5"><option value="">--choose--</option><option value="given">given</option><option value="based">based</option><option value="invented">invented</option></select></div>
-            <div class="q-row">6. Who was this magnificent palace... by? <select id="t12-q6"><option value="">--choose--</option><option value="used">used</option><option value="designed">designed</option><option value="built">built</option></select></div>
-            <div class="q-row">7. Many historians believe that paper was... in ancient China. <select id="t12-q7"><option value="">--choose--</option><option value="invented">invented</option><option value="directed">directed</option><option value="based">based</option></select></div>
-        </div>
-
-        <button type="submit" id="submit-btn">Submit & Verify Answers</button>
-    </form>
+    </div>
 </div>
 
 <script>
+    // COMPLETE MASTER QUESTION DATA SHEET
+    const database = [
+        // TASK 1 (Index 0-7)
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "1. If Oliver [input1] a bear in the woods, he [input2] away.", verbs: "see / run", a1: "saw", a2: ["would scream", "'d scream"] },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "2. I [input1] healthier if I [input2] drinking so much soda.", verbs: "feel / stop", a1: ["would feel", "'d feel"], a2: "stopped" },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "3. You [input1] sunburned if you [input2] the sunscreen I gave you.", verbs: "not get / use", a1: ["wouldn't get", "would not get"], a2: "used" },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "4. If Elena [input1] more, she [input2] into the music academy.", verbs: "practice / get", a1: "practiced", a2: ["would get", "'d get"] },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "5. I [input1] the spicy food if I [input2] Marcus.", verbs: "try / be", a1: ["would try", "'d try"], a2: "were" },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "6. If Nicole [input1] work late, she [input2] to the dinner party tonight.", verbs: "not have to / come", a1: ["didn't have to", "did not have to"], a2: ["would come", "'d come"] },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "7. The coach [input1] angry if the team [input2] today.", verbs: "be / not train", a1: ["would be", "'d be"], a2: ["didn't train", "did not train"] },
+        { t: "Task 1: Second Conditional", i: "Type the correct verb string forms.", e: "If I won (win), I would buy (buy).", type: "conditional", q: "8. If I [input1] a car, I [input2] my bike to work.", verbs: "not have / ride", a1: ["didn't have", "did not have"], a2: ["would ride", "'d ride"] },
+
+        // TASK 2 (Index 8-12)
+        { t: "Task 2: For vs Since", i: "Select 'for' or 'since'.", e: "Since 2015 / For 10 years.", type: "select", q: "1. We’ve lived in this apartment ______ we moved to the city in 2018.", opts: ["for", "since"], a: "since" },
+        { t: "Task 2: For vs Since", i: "Select 'for' or 'since'.", e: "Since 2015 / For 10 years.", type: "select", q: "2. Jonathan’s been a professional musician ______ over a decade.", opts: ["for", "since"], a: "for" },
+        { t: "Task 2: For vs Since", i: "Select 'for' or 'since'.", e: "Since 2015 / For 10 years.", type: "select", q: "3. The electricity hasn't worked ______ Tuesday morning.", opts: ["for", "since"], a: "since" },
+        { t: "Task 2: For vs Since", i: "Select 'for' or 'since'.", e: "Since 2015 / For 10 years.", type: "select", q: "4. Mr. Davis has been in the meeting ______ 9 o'clock.", opts: ["for", "since"], a: "since" },
+        { t: "Task 2: For vs Since", i: "Select 'for' or 'since'.", e: "Since 2015 / For 10 years.", type: "select", q: "5. Our family has owned this farm ______ many generations.", opts: ["for", "since"], a: "for" },
+
+        // TASK 3 (Index 13-19)
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "1. I **(not speak)** to Clara since we graduated from college.", opts: ["haven't spoken", "didn't speak"], a: "haven't spoken" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "2. My mother **(not learn)** German when she was at school.", opts: ["hasn't learned", "didn't learn"], a: "didn't learn" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "3. David **(work)** at this studio for five years. He really enjoys it.", opts: ["has worked", "worked"], a: "has worked" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "4. They **(not send)** me an invitation yesterday.", opts: ["haven't sent", "didn't send"], a: "didn't send" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "5. What time **(arrive)** the train this afternoon?", opts: ["did the train arrive", "has the train arrived"], a: "did the train arrive" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "6. Lucas and Sofia **(sell)** their old apartment last month.", opts: ["have sold", "sold"], a: "sold" },
+        { t: "Task 3: Present Perfect or Past Simple", i: "Choose the correct tense form.", e: "I visited Paris last year. / I have visited Paris twice.", type: "select", q: "7. 'How long know your best friend?' 'Since primary school.'", opts: ["have you known", "did you know"], a: "have you known" },
+
+        // TASK 4 (Index 20-27)
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "1. ______ born", opts: ["be", "get"], a: "be" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "2. ______ a baby", opts: ["have", "get"], a: "have" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "3. ______ a new business", opts: ["start", "go"], a: "start" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "4. ______ to primary school", opts: ["go", "be"], a: "go" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "5. ______ in love", opts: ["fall", "start"], a: "fall" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "6. Richmond ______ divorced", opts: ["get", "have"], a: "get" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "7. ______ married", opts: ["get", "be"], a: "get" },
+        { t: "Task 4: Life Events Collocations", i: "Pick the correct verb.", e: "go to university", type: "select", q: "8. ______ from teaching", opts: ["retire", "go"], a: "retire" },
+
+        // TASK 5 (Index 28-33)
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "1. Group: lizard / monkey / tiger / leopard", opts: ["lizard", "monkey", "tiger", "leopard"], a: "lizard" },
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "2. Group: wolf / cow / deer / lion", opts: ["wolf", "cow", "deer", "lion"], a: "cow" },
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "3. Group: donkey / sheep / hen / kangaroo", opts: ["donkey", "sheep", "hen", "kangaroo"], a: "kangaroo" },
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "4. Group: hamster / squirrel / eagle / cat", opts: ["hamster", "squirrel", "eagle", "cat"], a: "eagle" },
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "5. Group: horse / owl / bat / pigeon", opts: ["horse", "owl", "bat", "pigeon"], a: "horse" },
+        { t: "Task 5: Underline the Odd Word Out", i: "Pick the word that does NOT belong.", e: "apple / banana / chicken (chicken is not fruit)", type: "select", q: "6. Group: ant / wasp / dragonfly / frog", opts: ["ant", "wasp", "dragonfly", "frog"], a: "frog" },
+
+        // TASK 6 (Index 34-39)
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "1. Thomas never goes into deep water. He has a severe ______ of drowning.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "fear" },
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "2. When the lights went out, she started to ______ and look for the door.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "panic" },
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "3. I can’t look out of the window from the tenth floor. I’m scared of ______.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "heights" },
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "4. As a firefighter, I regularly help people who are ______ of the smoke.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "frightened" },
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "5. Maya hates public speaking. She ______ from a phobia of large crowds.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "suffers" },
+        { t: "Task 6: Phobia Sentence Matching", i: "Match context to the right phobia term.", e: "He hates spiders $\rightarrow$ phobia", type: "select", q: "6. My younger brother has a ______ of thunderstorms.", opts: ["phobia", "panic", "heights", "frightened", "suffers", "fear"], a: "phobia" },
+
+        // TASK 7 (Index 40-45)
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow$ take them off", type: "select", q: "1. The baby is sleeping, so please don't...", opts: ["wake up her", "wake her up"], a: "wake her up" },
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow$ take them off", type: "select", q: "2. What time do... on Sunday mornings?", opts: ["you get up", "get you up"], a: "you get up" },
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow$ take them off", type: "select", q: "3. 'I can't read this sign without my contacts.' 'Well, put...'", opts: ["on them", "them on"], a: "them on" },
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow$ take them off", type: "select", q: "4. 'The music is too loud.' 'Why don't you turn..., then?'", opts: ["down it", "it down"], a: "it down" },
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow$ take them off", type: "select", q: "5. Hey, can you... from the airport at midnight?", opts: ["pick us up", "pick up us"], a: "pick us up" },
+        { t: "Task 7: Word Order Multiple Choice", i: "Choose the correct grammatical phrase placement.", e: "Take off your shoes $\rightarrow; take them off", type: "select", q: "6. 'What is she looking for?' 'She’s...'", opts: ["looking for her keys", "looking her keys for"], a: "looking for her keys" },
+
+        // TASK 8 (Index 46-53)
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "1. Liam walked ______ the bank to get some cash from the machine.", opts: ["past", "into", "through"], a: "into" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "2. The weather is terrible outside. Why don't you come ______?", opts: ["out", "away", "in"], a: "in" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "3. We took great pictures as the helicopter flew ______ the grand canyon.", opts: ["over", "onto", "along"], a: "over" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "4. Rachel saw her friend as she was driving ______ the main road.", opts: ["under", "along", "around"], a: "along" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "5. Please don't run ______ the escalator, you might fall over.", opts: ["across", "along", "down"], a: "down" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "6. Every morning, I walk ______ the bakery and smell the fresh bread.", opts: ["past", "out", "into"], a: "past" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "7. We had to turn ______ because we realized we missed our exit.", opts: ["over", "round", "out"], a: "round" },
+        { t: "Task 8: Pick the Correct Preposition", i: "Choose the matching structural direction word.", e: "Walk through the door.", type: "select", q: "8. The most scenic route is to walk ______ the old forest.", opts: ["through", "into", "over"], a: "through" },
+
+        // TASK 9 (Index 54-61)
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "1. Millions of people drink green tea.<br><strong>Passive:</strong> Green tea [input]", a: "is spoken by millions of people" },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "2. A local artist painted the restaurant walls.<br><strong>Passive:</strong> The restaurant walls [input]", a: "were decorated by a local artist" },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "3. The assistants don't clean the kitchen.<br><strong>Passive:</strong> The kitchen [input]", a: ["isn't done by the assistants", "is not done by the assistants"] },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "4. The manager didn't sign these contracts.<br><strong>Passive:</strong> These contracts [input]", a: ["weren't signed by the manager", "were not signed by the manager"] },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "5. Heavy traffic pollutes the city air.<br><strong>Passive:</strong> The city air [input]", a: "is polluted by heavy traffic" },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "6. Our team won the championship trophy.<br><strong>Passive:</strong> The championship trophy [input]", a: "was won by our team" },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "7. Tim Berners-Lee invented the World Wide Web.<br><strong>Passive:</strong> The World Wide Web [input]", a: "was invented by tim berners-lee" },
+        { t: "Task 9: Active to Passive Voice Rewrite", i: "Type the passive ending clause string.", e: "Shakespeare wrote Hamlet $\rightarrow$ Hamlet was written by Shakespeare.", type: "text", q: "8. Mrs. Green doesn't teach history.<br><strong>Passive:</strong> History [input]", a: ["isn't taught by mrs green", "is not taught by mrs green"] },
+
+        // TASK 10 (Index 62-68)
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "1. The class will be [input] at 3:00 PM, and then you can leave.", a: "over" },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "2. Your clothes are all over the floor. Please put them [input].", a: "away" },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "3. Turn the heater [input]. It's freezing in this room.", a: "up" },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "4. How did the teacher find [input] about the secret party?", a: "out" },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "5. Arthur gets [input] well with his coworkers; they love him.", a: ["on", "along"] },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "6. I am filling [input] the application form for my passport.", a: ["in", "out"] },
+        { t: "Task 10: Phrasal Verbs Particles", i: "Type the functional particle modifier word.", e: "Turn off the light.", type: "text", q: "7. If you don't know the meaning of the word, look it [input] in the dictionary.", a: "up" },
+
+        // TASK 11 (Index 69-74)
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "1. You use a club to hit a tiny ball across a green field into a hole.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "golf" },
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "2. You run with an oval ball and throw it backward to your teammates.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "rugby" },
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "3. You bounce a ball and run across a court to throw it into a net.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "basketball" },
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "4. You travel fast down snow-covered hills on two long planks.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "skiing" },
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "5. You hold onto a sail attached to a board and ride the ocean waves.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "windsurfing" },
+        { t: "Task 11: Match Sports Sentences", i: "Select the correct sports label.", e: "Kick ball into net $\rightarrow$ football", type: "select", q: "6. You wear a helmet and use pedals to move two wheels fast on a track.", opts: ["basketball", "cycling", "golf", "motor racing", "rugby", "skiing", "windsurfing"], a: "cycling" },
+
+        // TASK 12 (Index 75-81)
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "1. The coffee served in this cafe is ______ in Colombia.", opts: ["created", "discovered", "produced"], a: "produced" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "2. When was penicillin ______ by Alexander Fleming?", opts: ["discovered", "used", "designed"], a: "discovered" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "3. The classic movie Psycho was ______ by Alfred Hitchcock.", opts: ["directed", "played", "invented"], a: "directed" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "4. The ceiling of the Sistine Chapel was ______ by Michelangelo.", opts: ["played", "called", "painted"], a: "painted" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "5. The TV series Sherlock is ______ on the books by Arthur Conan Doyle.", opts: ["given", "based", "invented"], a: "based" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "6. Who was this magnificent palace ______ by?", opts: ["used", "designed", "built"], a: "designed" },
+        { t: "Task 12: Pick the Right Word", i: "Select the correct verb to complete the phrase.", e: "The telephone was invented by Bell.", type: "select", q: "7. Many historians believe that paper was ______ in ancient China.", opts: ["invented", "directed", "based"], a: "invented" }
+    ];
+
+    let currentIndex = 0;
+
     function clean(str) {
         return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
     }
 
-    function checkQuiz() {
-        let errorCount = 0;
+    // LOAD QUESTION ROUTINE
+    function loadQuestion(index) {
+        currentIndex = index;
+        const currentData = database[currentIndex];
         
-        for (let i = 1; i <= 12; i++) {
-            document.getElementById(`card-${i}`).classList.remove('error-card', 'success-card');
+        // Update Headers
+        document.getElementById('progress-indicator').innerText = `Question ${currentIndex + 1} of ${database.length}`;
+        document.getElementById('task-title').innerText = currentData.t;
+        document.getElementById('task-instruction').innerText = currentData.i;
+        document.getElementById('task-example').innerHTML = `<strong>Example:</strong> ${currentData.e}`;
+        
+        // Reset feedback display window configurations
+        const feedback = document.getElementById('feedback-display');
+        feedback.style.display = "none";
+        document.getElementById('check-btn').disabled = false;
+        document.getElementById('next-btn').disabled = true;
+
+        const contentBox = document.getElementById('question-content');
+        
+        // Render view structures contextually
+        if (currentData.type === "conditional") {
+            let html = currentData.q
+                .replace("[input1]", `<input type="text" class="inline-input" id="cond-1" autocomplete="off">`)
+                .replace("[input2]", `<input type="text" class="inline-input" id="cond-2" autocomplete="off">`);
+            contentBox.innerHTML = `${html} <br><small style="color:var(--primary); font-weight:bold;">Verbs to use: (${currentData.verbs})</small>`;
+        } 
+        else if (currentData.type === "select") {
+            let selectHtml = `<select class="answer-select" id="sel-ans"><option value="">-- Choose Option --</option>`;
+            currentData.opts.forEach(opt => {
+                selectHtml += `<option value="${opt}">${opt}</option>`;
+            });
+            selectHtml += `</select>`;
+            contentBox.innerHTML = currentData.q.replace("______", "______") + "<br>" + selectHtml;
+        } 
+        else if (currentData.type === "text") {
+            let placeholderText = currentData.q.includes("is...") ? "Type your ending phrase logic..." : "Complete sentence...";
+            let html = currentData.q.replace("[input]", `<input type="text" id="txt-ans" placeholder="${placeholderText}" autocomplete="off">`);
+            contentBox.innerHTML = html;
+        }
+        
+        // Update selection sync flag value item inside navigation drawer elements safely
+        document.getElementById('jump-task').value = getTaskBaseIndex(currentIndex);
+    }
+
+    function getTaskBaseIndex(idx) {
+        if (idx <= 7) return 0;
+        if (idx <= 12) return 8;
+        if (idx <= 19) return 13;
+        if (idx <= 27) return 20;
+        if (idx <= 33) return 28;
+        if (idx <= 39) return 34;
+        if (idx <= 45) return 40;
+        if (idx <= 53) return 46;
+        if (idx <= 61) return 54;
+        if (idx <= 68) return 62;
+        if (idx <= 74) return 69;
+        return 75;
+    }
+
+    function jumpToTask(val) {
+        loadQuestion(parseInt(val));
+    }
+
+    // CHECK VALIDATION ENGINE
+    function verifyCurrentAnswer() {
+        const currentData = database[currentIndex];
+        let isCorrect = false;
+        let correctAnswerString = "";
+
+        if (currentData.type === "conditional") {
+            let val1 = clean(document.getElementById('cond-1').value);
+            let val2 = clean(document.getElementById('cond-2').value);
+            
+            let check1 = Array.isArray(currentData.a1) ? currentData.a1.map(clean).includes(val1) : clean(currentData.a1) === val1;
+            let check2 = Array.isArray(currentData.a2) ? currentData.a2.map(clean).includes(val2) : clean(currentData.a2) === val2;
+            
+            isCorrect = check1 && check2;
+            correctAnswerString = `Correct layout sequence: [${Array.isArray(currentData.a1) ? currentData.a1[0] : currentData.a1}] and [${Array.isArray(currentData.a2) ? currentData.a2[0] : currentData.a2}]`;
+        } 
+        else if (currentData.type === "select") {
+            let val = document.getElementById('sel-ans').value;
+            isCorrect = (val === currentData.a);
+            correctAnswerString = `Correct pick selection: "${currentData.a}"`;
+        } 
+        else if (currentData.type === "text") {
+            let val = clean(document.getElementById('txt-ans').value);
+            isCorrect = Array.isArray(currentData.a) ? currentData.a.map(clean).includes(val) : clean(currentData.a) === val;
+            correctAnswerString = `Correct phrase portion string: "${Array.isArray(currentData.a) ? currentData.a[0] : currentData.a}"`;
         }
 
-        // T1 Checks
-        if (clean(document.getElementById('t1-q1a').value) !== 'saw' || (clean(document.getElementById('t1-q1b').value) !== 'would scream' && clean(document.getElementById('t1-q1b').value) !== "'d scream") ||
-            (clean(document.getElementById('t1-q2a').value) !== 'would feel' && clean(document.getElementById('t1-q2a').value) !== "'d feel") || clean(document.getElementById('t1-q2b').value) !== 'stopped' ||
-            (clean(document.getElementById('t1-q3a').value) !== "wouldn't get" && clean(document.getElementById('t1-q3a').value) !== "would not get") || clean(document.getElementById('t1-q3b').value) !== 'used' ||
-            clean(document.getElementById('t1-q4a').value) !== 'practiced' || (clean(document.getElementById('t1-q4b').value) !== 'would get' && clean(document.getElementById('t1-q4b').value) !== "'d get") ||
-            (clean(document.getElementById('t1-q5a').value) !== 'would try' && clean(document.getElementById('t1-q5a').value) !== "'d try") || clean(document.getElementById('t1-q5b').value) !== 'were' ||
-            (clean(document.getElementById('t1-q6a').value) !== "didn't have to" && clean(document.getElementById('t1-q6a').value) !== "did not have to") || (clean(document.getElementById('t1-q6b').value) !== 'would come' && clean(document.getElementById('t1-q6b').value) !== "'d come") ||
-            (clean(document.getElementById('t1-q7a').value) !== 'would be' && clean(document.getElementById('t1-q7a').value) !== "'d be") || (clean(document.getElementById('t1-q7b').value) !== "didn't train" && clean(document.getElementById('t1-q7b').value) !== "did not train") ||
-            (clean(document.getElementById('t1-q8a').value) !== "didn't have" && clean(document.getElementById('t1-q8a').value) !== "did not have") || (clean(document.getElementById('t1-q8b').value) !== 'would ride' && clean(document.getElementById('t1-q8b').value) !== "'d ride")) {
-            document.getElementById('card-1').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-1').classList.add('success-card'); }
-
-        // T2 Checks
-        if (document.getElementById('t2-q1').value !== 'since' || document.getElementById('t2-q2').value !== 'for' || document.getElementById('t2-q3').value !== 'since' || document.getElementById('t2-q4').value !== 'since' || document.getElementById('t2-q5').value !== 'for') {
-            document.getElementById('card-2').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-2').classList.add('success-card'); }
-
-        // T3 Checks
-        if (document.getElementById('t3-q1').value !== 'correct' || document.getElementById('t3-q2').value !== 'correct' || document.getElementById('t3-q3').value !== 'correct' || document.getElementById('t3-q4').value !== 'correct' || document.getElementById('t3-q5').value !== 'correct' || document.getElementById('t3-q6').value !== 'correct' || document.getElementById('t3-q7').value !== 'correct') {
-            document.getElementById('card-3').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-3').classList.add('success-card'); }
-
-        // T4 Checks
-        if (document.getElementById('t4-q1').value !== 'be' || document.getElementById('t4-q2').value !== 'have' || document.getElementById('t4-q3').value !== 'start' || document.getElementById('t4-q4').value !== 'go' || document.getElementById('t4-q5').value !== 'fall' || document.getElementById('t4-q6').value !== 'get' || document.getElementById('t4-q7').value !== 'get' || document.getElementById('t4-q8').value !== 'retire') {
-            document.getElementById('card-4').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-4').classList.add('success-card'); }
-
-        // T5 Checks
-        if (document.getElementById('t5-q1').value !== 'lizard' || document.getElementById('t5-q2').value !== 'cow' || document.getElementById('t5-q3').value !== 'kangaroo' || document.getElementById('t5-q4').value !== 'eagle' || document.getElementById('t5-q5').value !== 'horse' || document.getElementById('t5-q6').value !== 'frog') {
-            document.getElementById('card-5').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-5').classList.add('success-card'); }
-
-        // T6 Checks
-        if (document.getElementById('t6-q1').value !== 'fear' || document.getElementById('t6-q2').value !== 'panic' || document.getElementById('t6-q3').value !== 'heights' || document.getElementById('t6-q4').value !== 'frightened' || document.getElementById('t6-q5').value !== 'suffers' || document.getElementById('t6-q6').value !== 'phobia') {
-            document.getElementById('card-6').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-6').classList.add('success-card'); }
-
-        // T7 Checks
-        if (document.getElementById('t7-q1').value !== 'correct' || document.getElementById('t7-q2').value !== 'correct' || document.getElementById('t7-q3').value !== 'correct' || document.getElementById('t7-q4').value !== 'correct' || document.getElementById('t7-q5').value !== 'correct' || document.getElementById('t7-q6').value !== 'correct') {
-            document.getElementById('card-7').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-7').classList.add('success-card'); }
-
-        // T8 Checks
-        if (document.getElementById('t8-q1').value !== 'into' || document.getElementById('t8-q2').value !== 'in' || document.getElementById('t8-q3').value !== 'over' || document.getElementById('t8-q4').value !== 'along' || document.getElementById('t8-q5').value !== 'down' || document.getElementById('t8-q6').value !== 'past' || document.getElementById('t8-q7').value !== 'round' || document.getElementById('t8-q8').value !== 'through') {
-            document.getElementById('card-8').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-8').classList.add('success-card'); }
-
-        // T9 Checks
-        let t9_1 = clean(document.getElementById('t9-q1').value);
-        let t9_2 = clean(document.getElementById('t9-q2').value);
-        let t9_3 = clean(document.getElementById('t9-q3').value);
-        let t9_4 = clean(document.getElementById('t9-q4').value);
-        let t9_5 = clean(document.getElementById('t9-q5').value);
-        let t9_6 = clean(document.getElementById('t9-q6').value);
-        let t9_7 = clean(document.getElementById('t9-q7').value);
-        let t9_8 = clean(document.getElementById('t9-q8').value);
-
-        if (t9_1 !== 'is spoken by millions of people' || t9_2 !== 'were decorated by a local artist' || 
-            (t9_3 !== "isn't done by the assistants" && t9_3 !== "is not done by the assistants") || 
-            (t9_4 !== "weren't signed by the manager" && t9_4 !== "were not signed by the manager") || 
-            t9_5 !== 'is polluted by heavy traffic' || t9_6 !== 'was won by our team' || 
-            t9_7 !== 'was invented by tim berners-lee' || 
-            (t9_8 !== "isn't taught by mrs green" && t9_8 !== "is not taught by mrs green")) {
-            document.getElementById('card-9').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-9').classList.add('success-card'); }
-
-        // T10 Checks
-        if (clean(document.getElementById('t10-q1').value) !== 'over' || clean(document.getElementById('t10-q2').value) !== 'away' || clean(document.getElementById('t10-q3').value) !== 'up' || clean(document.getElementById('t10-q4').value) !== 'out' || (clean(document.getElementById('t10-q5').value) !== 'on' && clean(document.getElementById('t10-q5').value) !== 'along') || (clean(document.getElementById('t10-q6').value) !== 'in' && clean(document.getElementById('t10-q6').value) !== 'out') || clean(document.getElementById('t10-q7').value) !== 'up') {
-            document.getElementById('card-10').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-10').classList.add('success-card'); }
-
-        // T11 Checks
-        if (document.getElementById('t11-q1').value !== 'golf' || document.getElementById('t11-q2').value !== 'rugby' || document.getElementById('t11-q3').value !== 'basketball' || document.getElementById('t11-q4').value !== 'skiing' || document.getElementById('t11-q5').value !== 'windsurfing' || document.getElementById('t11-q6').value !== 'cycling') {
-            document.getElementById('card-11').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-11').classList.add('success-card'); }
-
-        // T12 Checks
-        if (document.getElementById('t12-q1').value !== 'produced' || document.getElementById('t12-q2').value !== 'discovered' || document.getElementById('t12-q3').value !== 'directed' || document.getElementById('t12-q4').value !== 'painted' || document.getElementById('t12-q5').value !== 'based' || document.getElementById('t12-q6').value !== 'designed' || document.getElementById('t12-q7').value !== 'invented') {
-            document.getElementById('card-12').classList.add('error-card'); errorCount++;
-        } else { document.getElementById('card-12').classList.add('success-card'); }
-
-        let msgBox = document.getElementById('result-msg');
-        if (errorCount > 0) {
-            msgBox.style.display = "block";
-            msgBox.style.backgroundColor = "var(--danger)";
-            msgBox.style.color = "white";
-            msgBox.innerHTML = `❌ You have errors in ${errorCount} task(s). Review the red panels and try again!`;
-            window.scrollTo({top: 0, behavior: 'smooth'});
+        // SHOW SYSTEM FEEDBACK WINDOW INFO
+        const feedback = document.getElementById('feedback-display');
+        feedback.style.display = "block";
+        
+        if (isCorrect) {
+            feedback.className = "feedback-box feedback-correct";
+            feedback.innerText = "🎉 Excellent! Correct Answer.";
         } else {
-            msgBox.style.display = "block";
-            msgBox.style.backgroundColor = "var(--success)";
-            msgBox.style.color = "white";
-            msgBox.innerHTML = "🎉 Perfect! Everything is 100% correct. Fantastic job!";
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            feedback.className = "feedback-box feedback-wrong";
+            feedback.innerHTML = `❌ Incorrect. <br><span style="font-size:0.85rem; font-weight:normal;">${correctAnswerString}</span>`;
+        }
+
+        document.getElementById('check-btn').disabled = true;
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+        if (currentIndex < database.length - 1) {
+            loadQuestion(currentIndex + 1);
+        } else {
+            alert("🎉 Awesome! You finished the entire exam practice course sheet!");
         }
     }
+
+    // Initial load execution script trigger call handle
+    window.onload = function() {
+        loadQuestion(0);
+    };
 </script>
 </body>
 </html>
