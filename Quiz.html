@@ -173,6 +173,13 @@
             cursor: not-allowed;
         }
 
+        /* Deadline Screen Overrides */
+        .deadline-locked {
+            text-align: center;
+            color: var(--danger);
+            padding: 40px 20px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
             to { opacity: 1; transform: translateY(0); }
@@ -181,7 +188,7 @@
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-container" id="main-app-wrapper">
     <div class="nav-header">
         <div class="nav-row">
             <span class="progress-text" id="progress-indicator">Question 1 of 40</span>
@@ -194,7 +201,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="quiz-card">
         <div>
             <h2 id="task-title">Loading...</h2>
             <p class="instruction" id="task-instruction">Instruction</p>
@@ -267,9 +274,41 @@
 
     let currentIndex = 0;
     let studentHistory = [];
+    let globalStudentName = ""; // Secure registration anchor tracking variable
 
     function clean(str) {
         return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
+    }
+
+    // CHECK SYSTEM DEADLINE LOGIC: 2026. 05. 19. 20:00 (8:00 PM)
+    function checkDeadlineLock() {
+        const deadline = new Date("2026-05-19T20:00:00");
+        const now = new Date();
+        
+        if (now > deadline) {
+            document.getElementById('main-app-wrapper').innerHTML = `
+                <div class="card deadline-locked">
+                    <h2>⏰ Access Denied</h2>
+                    <p>The deadline for this vocabulary submission has passed.</p>
+                    <p style="font-size:0.9rem; color:#718096;">Expired: 2026. 05. 19. 20:00 (8 p.m.)</p>
+                </div>
+            `;
+            return true;
+        }
+        return false;
+    }
+
+    function promptForStudentIdentity() {
+        let name = "";
+        while (!name || name.trim().length < 3) {
+            name = prompt("👋 Welcome! Please enter your Full Name to begin the test:\n(Ez a név jelenik meg a tanári naplóban)");
+            if (name === null) {
+                document.body.innerHTML = `<h3 style='text-align:center; margin-top:50px; color:red;'>You must enter your name to access the quiz. Refresh the page to try again.</h3>`;
+                return false;
+            }
+        }
+        globalStudentName = name.trim();
+        return true;
     }
 
     function loadQuestion(index) {
@@ -361,11 +400,9 @@
         if (currentIndex < database.length - 1) {
             loadQuestion(currentIndex + 1);
         } else {
-            let studentName = prompt("🎉 You have finished the vocabulary test! Please enter your Full Name to view grading summary updates:");
-            if (!studentName) studentName = "Anonymous Student";
-
+            // END OF QUIZ DATA COMPILATION LOGIC RUN
             let totalCorrect = 0;
-            let reportSummary = `Student Name: ${studentName}\n`;
+            let reportSummary = `Student Name: ${globalStudentName}\n`;
             
             for(let i = 0; i < database.length; i++) {
                 let reportItem = studentHistory[i] || { status: "UNATTEMPTED", correctValue: database[i].a, input: "" };
@@ -377,13 +414,13 @@
             let finalPercent = Math.round((totalCorrect / database.length) * 100);
             let finalScoreString = `Score: ${totalCorrect}/${database.length} (${finalPercent}%)`;
             
-            // YOUR GOOGLE FORM CONFIGURATION DETAILS
+            // GOOGLE FORMS HOOKUP ENDPOINTS
             const formURL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdTfqWcQvVFY1c-cs1W3IX8A9GX03sh8ZOU5KcKqe73rEvuCg/formResponse";
             const nameID = "entry.PUT_STUDENT_NAME_ID_HERE";
             const resultsID = "entry.PUT_QUIZ_RESULTS_ID_HERE";
 
             const formData = new FormData();
-            formData.append(nameID, studentName);
+            formData.append(nameID, globalStudentName);
             formData.append(resultsID, `${finalScoreString}\n\n${reportSummary}`);
 
             fetch(formURL, {
@@ -392,17 +429,22 @@
                 body: formData
             })
             .then(() => {
-                alert(`✨ Thank you, ${studentName}!\nYour final score is ${totalCorrect}/${database.length} (${finalPercent}%).\nResults have been sent directly to your teacher.`);
+                alert(`✨ Thank you, ${globalStudentName}!\nYour final score is ${totalCorrect}/${database.length} (${finalPercent}%).\nResults have been successfully updated in your teacher's grading sheet.`);
             })
             .catch((error) => {
-                alert("Submission system notice: Please take a screenshot of your screen to hand in manually if form configuration variables are unlinked!");
+                alert("Submission system notice: Please take a screenshot of your score to submit manually if needed!");
                 console.error(error);
             });
         }
     }
 
     window.onload = function() {
-        loadQuestion(0);
+        // Run sequential setup validations
+        if (!checkDeadlineLock()) {
+            if (promptForStudentIdentity()) {
+                loadQuestion(0);
+            }
+        }
     };
 </script>
 </body>
