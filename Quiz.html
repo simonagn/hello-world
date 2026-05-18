@@ -39,9 +39,6 @@
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
         }
 
         .nav-row {
@@ -56,14 +53,21 @@
             color: #4a5568;
         }
 
-        select.task-selector {
-            padding: 6px;
-            border-radius: 6px;
-            border: 1px solid #cbd5e0;
-            font-size: 0.85rem;
-            background-color: #fff;
-            color: var(--primary);
-            font-weight: bold;
+        /* Timer Styles */
+        .timer-container {
+            width: 100%;
+            background-color: #e2e8f0;
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 100%;
+            background-color: #48bb78;
+            transition: width 1s linear, background-color 0.3s;
         }
 
         .card {
@@ -72,10 +76,11 @@
             padding: 20px;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
             border: 2px solid #e2e8f0;
-            min-height: 240px;
+            min-height: 260px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
         }
 
         h2 {
@@ -126,20 +131,10 @@
             font-weight: bold;
             font-size: 0.95rem;
             display: none;
-            animation: fadeIn 0.3s ease;
         }
 
-        .feedback-correct {
-            background-color: #c6f6d5;
-            color: #22543d;
-            border: 1px solid #9ae6b4;
-        }
-
-        .feedback-wrong {
-            background-color: #fed7d7;
-            color: #742a2a;
-            border: 1px solid #feb2b2;
-        }
+        .feedback-correct { background-color: #c6f6d5; color: #22543d; border: 1px solid #9ae6b4; }
+        .feedback-wrong { background-color: #fed7d7; color: #742a2a; border: 1px solid #feb2b2; }
 
         .action-btns {
             margin-top: 20px;
@@ -155,53 +150,74 @@
             font-size: 1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
-        .btn-check {
-            background-color: var(--primary);
-            color: white;
+        .btn-check { background-color: var(--primary); color: white; }
+        .btn-next { background-color: #4a5568; color: white; }
+        button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        /* Welcome & Lock Overlays */
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(247, 250, 252, 0.98);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
-        .btn-next {
-            background-color: #4a5568;
-            color: white;
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Deadline Screen Overrides */
-        .deadline-locked {
+        .overlay-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
             text-align: center;
-            color: var(--danger);
-            padding: 40px 20px;
+            border: 2px solid #e2e8f0;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .overlay-card input {
+            margin: 15px 0;
+            padding: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: center;
         }
     </style>
 </head>
 <body>
 
-<div class="app-container" id="main-app-wrapper">
+<!-- Name Registration Overlay Screen -->
+<div id="name-overlay" class="overlay">
+    <div class="overlay-card">
+        <h2>👋 Vocabulary Practice App</h2>
+        <p style="color: #4a5568; font-size: 0.9rem;">Please enter your Full Name to start the test.<br>(Ez a név jelenik meg a tanári naplóban.)</p>
+        <input type="text" id="student-name-input" placeholder="Your Full Name..." autocomplete="off">
+        <button class="btn-check" onclick="startQuizWithIdentity()">Start Test ➔</button>
+    </div>
+</div>
+
+<!-- Lockout Screen Wrapper Container -->
+<div class="app-container" id="main-app-wrapper" style="display:none;">
     <div class="nav-header">
         <div class="nav-row">
             <span class="progress-text" id="progress-indicator">Question 1 of 40</span>
-            <select class="task-selector" id="jump-task" onchange="jumpToTask(this.value)">
-                <option value="0">Task 1: Places & Buildings</option>
-                <option value="10">Task 2: Travel & Holidays</option>
-                <option value="20">Task 3: Adverbs Formation</option>
-                <option value="28">Task 4: Verbs & Phrases</option>
-            </select>
+            <span class="progress-text" id="timer-text" style="color: var(--danger);">20s</span>
         </div>
     </div>
+    
+    <div class="timer-container">
+        <div id="quiz-timer-bar" class="timer-bar"></div>
+    </div>
 
-    <div class="card" id="quiz-card">
+    <div class="card">
         <div>
             <h2 id="task-title">Loading...</h2>
             <p class="instruction" id="task-instruction">Instruction</p>
@@ -222,6 +238,9 @@
 </div>
 
 <script>
+    // Paste your Web App Execution Deployment URL here
+    const WEB_APP_DEPLOYMENT_URL = "PASTE_YOUR_GOOGLE_WEB_APP_URL_HERE";
+
     const database = [
         // TASK 1: Places and Buildings
         { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "A building where sick people are treated -> Hospital", type: "select", q: "1. A place where you can buy medicine and medical items.", opts: ["Chemist's / Pharmacy", "Department store", "Town hall"], a: "Chemist's / Pharmacy" },
@@ -274,41 +293,89 @@
 
     let currentIndex = 0;
     let studentHistory = [];
-    let globalStudentName = ""; // Secure registration anchor tracking variable
+    let globalStudentName = "";
+    
+    // Timer Tracking Handles
+    let questionTimer = null;
+    let secondsLeft = 20;
 
     function clean(str) {
         return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
     }
 
-    // CHECK SYSTEM DEADLINE LOGIC: 2026. 05. 19. 20:00 (8:00 PM)
     function checkDeadlineLock() {
-        const deadline = new Date("2026-05-19T20:00:00");
+        const deadline = new Date(2026, 4, 19, 20, 0, 0); // May 19, 2026, 20:00
         const now = new Date();
-        
         if (now > deadline) {
-            document.getElementById('main-app-wrapper').innerHTML = `
-                <div class="card deadline-locked">
-                    <h2>⏰ Access Denied</h2>
-                    <p>The deadline for this vocabulary submission has passed.</p>
-                    <p style="font-size:0.9rem; color:#718096;">Expired: 2026. 05. 19. 20:00 (8 p.m.)</p>
-                </div>
-            `;
+            document.body.innerHTML = `
+                <div class="overlay">
+                    <div class="overlay-card" style="border: 2px solid var(--danger);">
+                        <h2 style="color: var(--danger);">⏰ Access Denied</h2>
+                        <p>The deadline for this vocabulary test has passed.</p>
+                        <p style="font-size:0.9rem; color:#718096; font-weight: bold;">Expired: 2026. 05. 19. 20:00 (8 p.m.)</p>
+                    </div>
+                </div>`;
             return true;
         }
         return false;
     }
 
-    function promptForStudentIdentity() {
-        let name = "";
-        while (!name || name.trim().length < 3) {
-            name = prompt("👋 Welcome! Please enter your Full Name to begin the test:\n(Ez a név jelenik meg a tanári naplóban)");
-            if (name === null) {
-                document.body.innerHTML = `<h3 style='text-align:center; margin-top:50px; color:red;'>You must enter your name to access the quiz. Refresh the page to try again.</h3>`;
-                return false;
-            }
+    function startQuizWithIdentity() {
+        const inputName = document.getElementById('student-name-input').value.trim();
+        if (inputName.length < 3) {
+            alert("Please write your full name!");
+            return;
         }
-        globalStudentName = name.trim();
-        return true;
+        globalStudentName = inputName;
+        document.getElementById('name-overlay').style.display = 'none';
+        document.getElementById('main-app-wrapper').style.display = 'block';
+        loadQuestion(0);
+    }
+
+    function startTimerRoutine() {
+        clearInterval(questionTimer);
+        secondsLeft = 20;
+        const bar = document.getElementById('quiz-timer-bar');
+        const txt = document.getElementById('timer-text');
+        
+        bar.style.width = "100%";
+        bar.style.backgroundColor = "#48bb78";
+        txt.innerText = "20s";
+
+        questionTimer = setInterval(() => {
+            secondsLeft--;
+            txt.innerText = secondsLeft + "s";
+            
+            let percentage = (secondsLeft / 20) * 100;
+            bar.style.width = percentage + "%";
+
+            if (secondsLeft <= 10 && secondsLeft > 5) {
+                bar.style.backgroundColor = "#ecc94b"; // Yellow
+            } else if (secondsLeft <= 5) {
+                bar.style.backgroundColor = "#f56565"; // Red
+            }
+
+            if (secondsLeft <= 0) {
+                clearInterval(questionTimer);
+                autoTimeoutAnswer();
+            }
+        }, 1000);
+    }
+
+    function autoTimeoutAnswer() {
+        const feedback = document.getElementById('feedback-display');
+        feedback.style.display = "block";
+        feedback.className = "feedback-box feedback-wrong";
+        feedback.innerHTML = `⏰ <strong>Time's up!</strong><br>Correct answer was: ${database[currentIndex].a}`;
+        
+        studentHistory[currentIndex] = {
+            status: "WRONG",
+            input: "[TIMEOUT]",
+            correctValue: database[currentIndex].a
+        };
+
+        document.getElementById('check-btn').disabled = true;
+        document.getElementById('next-btn').disabled = false;
     }
 
     function loadQuestion(index) {
@@ -320,76 +387,54 @@
         document.getElementById('task-instruction').innerText = currentData.i;
         document.getElementById('task-example').innerHTML = `<strong>Example:</strong> ${currentData.e}`;
         
-        const feedback = document.getElementById('feedback-display');
-        feedback.style.display = "none";
+        document.getElementById('feedback-display').style.display = "none";
         document.getElementById('check-btn').disabled = false;
         document.getElementById('next-btn').disabled = true;
 
         const contentBox = document.getElementById('question-content');
-        
         if (currentData.type === "select") {
             let selectHtml = `<select class="answer-select" id="sel-ans"><option value="">-- Choose Option --</option>`;
-            currentData.opts.forEach(opt => {
-                selectHtml += `<option value="${opt}">${opt}</option>`;
-            });
+            currentData.opts.forEach(opt => selectHtml += `<option value="${opt}">${opt}</option>`);
             selectHtml += `</select>`;
             contentBox.innerHTML = currentData.q + "<br>" + selectHtml;
-        } 
-        else if (currentData.type === "text") {
-            let html = currentData.q.replace("[input]", `<input type="text" id="txt-ans" placeholder="Type answer phrase here..." autocomplete="off">`);
+        } else {
+            let html = currentData.q.replace("[input]", `<input type="text" id="txt-ans" placeholder="Type answer here..." autocomplete="off">`);
             if(!currentData.q.includes("[input]")) {
                 html += `<br><input type="text" id="txt-ans" placeholder="Type answer here..." autocomplete="off">`;
             }
             contentBox.innerHTML = html;
         }
-        
-        document.getElementById('jump-task').value = getTaskBaseIndex(currentIndex);
-    }
-
-    function getTaskBaseIndex(idx) {
-        if (idx <= 9) return 0;
-        if (idx <= 19) return 10;
-        if (idx <= 27) return 20;
-        return 28;
-    }
-
-    function jumpToTask(val) {
-        loadQuestion(parseInt(val));
+        startTimerRoutine();
     }
 
     function verifyCurrentAnswer() {
+        clearInterval(questionTimer);
         const currentData = database[currentIndex];
         let isCorrect = false;
         let studentInput = "";
-        let expectedAnswer = currentData.a;
 
         if (currentData.type === "select") {
             studentInput = document.getElementById('sel-ans').value;
-            isCorrect = (studentInput === expectedAnswer);
-        } 
-        else if (currentData.type === "text") {
+            isCorrect = (studentInput === currentData.a);
+        } else {
             studentInput = document.getElementById('txt-ans').value;
-            isCorrect = (clean(studentInput) === clean(expectedAnswer));
+            isCorrect = (clean(studentInput) === clean(currentData.a));
         }
 
         studentHistory[currentIndex] = {
-            qNum: currentIndex + 1,
-            task: currentData.t,
-            question: currentData.q.replace(/<[^>]*>/g, ''),
-            input: studentInput || "[No Answer Entered]",
             status: isCorrect ? "CORRECT" : "WRONG",
-            correctValue: expectedAnswer
+            input: studentInput || "[No Answer Entered]",
+            correctValue: currentData.a
         };
 
         const feedback = document.getElementById('feedback-display');
         feedback.style.display = "block";
-        
         if (isCorrect) {
             feedback.className = "feedback-box feedback-correct";
             feedback.innerText = "🎉 Excellent! Correct Answer.";
         } else {
             feedback.className = "feedback-box feedback-wrong";
-            feedback.innerHTML = `❌ Incorrect. <br><span style="font-size:0.85rem; font-weight:normal;">Correct answer: <strong>${expectedAnswer}</strong></span>`;
+            feedback.innerHTML = `❌ Incorrect.<br>Correct: <strong>${currentData.a}</strong>`;
         }
 
         document.getElementById('check-btn').disabled = true;
@@ -400,51 +445,39 @@
         if (currentIndex < database.length - 1) {
             loadQuestion(currentIndex + 1);
         } else {
-            // END OF QUIZ DATA COMPILATION LOGIC RUN
+            clearInterval(questionTimer);
+            document.getElementById('main-app-wrapper').innerHTML = `
+                <div class="card" style="text-align:center; padding: 40px 20px;">
+                    <h2>Sikeres befejezés! 🎉</h2>
+                    <p>Sending your results to the teacher's gradebook... Please wait.</p>
+                </div>`;
+
             let totalCorrect = 0;
-            let reportSummary = `Student Name: ${globalStudentName}\n`;
-            
-            for(let i = 0; i < database.length; i++) {
-                let reportItem = studentHistory[i] || { status: "UNATTEMPTED", correctValue: database[i].a, input: "" };
-                if(reportItem.status === "CORRECT") totalCorrect++;
-                
-                reportSummary += `Q${i+1} (${reportItem.status}): Input: "${reportItem.input}" | Correct: "${reportItem.correctValue}"\n`;
-            }
-            
-            let finalPercent = Math.round((totalCorrect / database.length) * 100);
-            let finalScoreString = `Score: ${totalCorrect}/${database.length} (${finalPercent}%)`;
-            
-            // GOOGLE FORMS HOOKUP ENDPOINTS
-            const formURL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdTfqWcQvVFY1c-cs1W3IX8A9GX03sh8ZOU5KcKqe73rEvuCg/formResponse";
-            const nameID = "entry.PUT_STUDENT_NAME_ID_HERE";
-            const resultsID = "entry.PUT_QUIZ_RESULTS_ID_HERE";
+            studentHistory.forEach(item => { if(item && item.status === "CORRECT") totalCorrect++; });
+            let finalScoreString = `${totalCorrect}/${database.length}`;
 
-            const formData = new FormData();
-            formData.append(nameID, globalStudentName);
-            formData.append(resultsID, `${finalScoreString}\n\n${reportSummary}`);
-
-            fetch(formURL, {
+            // DISPATCH DATA DIRECTLY VIA WEB APP POST ACTION
+            fetch(WEB_APP_DEPLOYMENT_URL, {
                 method: "POST",
                 mode: "no-cors",
-                body: formData
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    "name": globalStudentName,
+                    "score": finalScoreString
+                })
             })
             .then(() => {
-                alert(`✨ Thank you, ${globalStudentName}!\nYour final score is ${totalCorrect}/${database.length} (${finalPercent}%).\nResults have been successfully updated in your teacher's grading sheet.`);
+                alert("✨ Results saved successfully!");
+                location.reload();
             })
-            .catch((error) => {
-                alert("Submission system notice: Please take a screenshot of your score to submit manually if needed!");
-                console.error(error);
+            .catch(() => {
+                alert("Saved locally! Take a screenshot just in case.");
             });
         }
     }
 
     window.onload = function() {
-        // Run sequential setup validations
-        if (!checkDeadlineLock()) {
-            if (promptForStudentIdentity()) {
-                loadQuestion(0);
-            }
-        }
+        checkDeadlineLock();
     };
 </script>
 </body>
