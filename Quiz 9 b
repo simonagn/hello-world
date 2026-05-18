@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Practice App</title>
+    <style>
+        :root {
+            --primary: #2b6cb0;
+            --success: #2ec4b6;
+            --danger: #e63946;
+            --background: #f7fafc;
+            --card: #ffffff;
+            --text: #2d3748;
+            --example-bg: #edf2f7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10px;
+        }
+
+        .nav-header {
+            background: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .progress-text {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        select.task-selector {
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e0;
+            font-size: 0.85rem;
+            background-color: #fff;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border: 2px solid #e2e8f0;
+            min-height: 240px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin: 0 0 4px 0;
+        }
+
+        .instruction {
+            font-size: 0.8rem;
+            color: #4a5568;
+            margin: 0 0 12px 0;
+            font-style: italic;
+        }
+
+        .example-box {
+            background: var(--example-bg);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            border-left: 4px solid #4a5568;
+        }
+
+        .question-box {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        input[type="text"], select.answer-select {
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 8px;
+            background-color: #fff;
+        }
+
+        .feedback-box {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-correct {
+            background-color: #c6f6d5;
+            color: #22543d;
+            border: 1px solid #9ae6b4;
+        }
+
+        .feedback-wrong {
+            background-color: #fed7d7;
+            color: #742a2a;
+            border: 1px solid #feb2b2;
+        }
+
+        .action-btns {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-check {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-next {
+            background-color: #4a5568;
+            color: white;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="nav-header">
+        <div class="nav-row">
+            <span class="progress-text" id="progress-indicator">Question 1 of 40</span>
+            <select class="task-selector" id="jump-task" onchange="jumpToTask(this.value)">
+                <option value="0">Task 1: Places & Buildings</option>
+                <option value="10">Task 2: Travel & Holidays</option>
+                <option value="20">Task 3: Adverbs Formation</option>
+                <option value="28">Task 4: Verbs & Phrases</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="card">
+        <div>
+            <h2 id="task-title">Loading...</h2>
+            <p class="instruction" id="task-instruction">Instruction</p>
+            <div class="example-box" id="task-example">Example</div>
+            
+            <div class="question-box" id="question-content"></div>
+        </div>
+
+        <div>
+            <div class="feedback-box" id="feedback-display"></div>
+            
+            <div class="action-btns">
+                <button class="btn-check" id="check-btn" onclick="verifyCurrentAnswer()">Check Answer</button>
+                <button class="btn-next" id="next-btn" onclick="nextQuestion()" disabled>Next ➔</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const database = [
+        // TASK 1: Places and Buildings
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "A building where sick people are treated -> Hospital", type: "select", q: "1. A place where you can buy medicine and medical items.", opts: ["Chemist's / Pharmacy", "Department store", "Town hall"], a: "Chemist's / Pharmacy" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "2. A very large shop divided into several sections selling different items.", opts: ["Shopping centre", "Market", "Department store"], a: "Department store" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "3. What is the English term for: <strong>Művészeti galéria</strong>?", a: "art gallery" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "4. What is the English term for: <strong>Kastély / Vár</strong>?", a: "castle" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "5. An open area in a town, usually square in shape, surrounded by buildings.", opts: ["Square", "Bridge", "Market"], a: "Square" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "6. A structure built over a river or road so people or vehicles can cross.", opts: ["Town hall", "Bridge", "Railway station"], a: "Bridge" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "7. What is the English term for: <strong>Városháza</strong>?", a: "town hall" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "8. What is the English term for: <strong>Rendőrkapitányság</strong>?", a: "police station" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "9. An outdoor or indoor area where people buy and sell fresh food and items.", opts: ["Market", "Museum", "Department store"], a: "Market" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "10. A building where objects of historical, scientific, or artistic interest are kept.", opts: ["Museum", "Town hall", "Police station"], a: "Museum" },
+
+        // TASK 2: Travel and Holidays
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "11. If you want to check out famous historical places in a new city, you go ______.", opts: ["sightseeing", "accommodation", "experiences"], a: "sightseeing" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "12. Before going to the airport, you must pack your ______.", opts: ["suitcase", "hotel", "flight"], a: "suitcase" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "13. Complete the English phrase for: <strong>Repülőjegyet foglal</strong>.<br>Book a [input]", a: "flight" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "14. What is the English term for a list of things you want to do before you die: <strong>Bakancslista</strong>?", a: "bucket list" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "15. Europe, Asia, and Africa are examples of a ______.", opts: ["continent", "experience", "accommodation"], a: "continent" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "16. Complete the English phrase for: <strong>Jól érzi magát</strong>.<br>Have a good [input]", a: "time" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "17. Complete the English phrase for: <strong>Új emberekkel ismerkedik meg</strong>.<br>Meet new [input]", a: "people" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "18. Instead of an expensive hotel, budget travelers often choose to stay in a cheap ______.", opts: ["hostel", "flat", "continent"], a: "hostel" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "19. Complete the phrase: <strong>Elmegy szórakozni éjszaka</strong>.<br>Go ______ at night", opts: ["out", "by", "to"], a: "out" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "20. Complete the phrase: <strong>Vonattal megy</strong>.<br>Go ______ train", opts: ["by", "with", "on"], a: "by" },
+
+        // TASK 3: Adverbs
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "21. She speaks English perfectly and without stopping. She speaks ______.", opts: ["fluently", "quietly", "politely"], a: "fluently" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "22. The traffic was moving very slowly, so we arrived late. What is the adverb?", opts: ["slowly", "dangerously", "carefully"], a: "slowly" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "23. How do you say <strong>Óvatosan / Gondosan</strong> in English?", a: "carefully" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "24. How do you say <strong>Veszélyesen</strong> in English?", a: "dangerously" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "25. He eats organic fruits and exercises daily. He lives ______.", opts: ["healthily", "incredibly", "quietly"], a: "healthily" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "26. Please talk ______ in the library so you do not disturb others.", opts: ["quietly", "dangerously", "fluently"], a: "quietly" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "27. How do you say <strong>Udvariasan</strong> in English?", a: "politely" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "28. How do you say <strong>Hihetetlenül</strong> in English?", a: "incredibly" },
+
+        // TASK 4: Verbs and Phrases
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "29. If you make a lot of movies and everyone knows your name, you ______.", opts: ["become famous", "fall in love", "pay bills"], a: "become famous" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "30. The feeling of confusion when visiting a brand-new country is a ______.", opts: ["culture shock", "tipping system", "surprise"], a: "culture shock" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "31. Translate the phrase: <strong>Megígéri, hogy felhívja</strong>.<br>[input] to call", a: "promise" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "32. Translate the phrase: <strong>Elfelejti bezárni</strong>.<br>[input] to lock", a: "forget" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "33. Every month, I have to open my bank account and ______ for water and electricity.", opts: ["pay bills", "earn money", "rent a flat"], a: "pay bills" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "34. Translate the phrase: <strong>Megjósolja a jövőt</strong>.<br>[input] the future", a: "predict" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "35. The money you receive every month from your regular job is your ______.", opts: ["salary", "rent", "insurance"], a: "salary" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "36. Complete the phrase: <strong>Valóra vált egy álmot</strong>.<br>Make a dream ______ true", opts: ["come", "go", "be"], a: "come" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "37. When it is very cold outside, you should always ______.", opts: ["dress warmly", "travel safely", "work hard"], a: "dress warmly" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "38. Complete the phrase: <strong>Szerelembe esik</strong>.<br>______ in love", opts: ["fall", "get", "become"], a: "fall" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "39. Complete the phrase: <strong>Megházasodik</strong>.<br>______ married", opts: ["get", "have", "make"], a: "get" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "40. In restaurants, custom sets a rules protocol for leaving extra cash called a ______.", opts: ["tipping system", "salary", "insurance"], a: "tipping system" }
+    ];
+
+    let currentIndex = 0;
+    let studentHistory = [];
+
+    function clean(str) {
+        return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
+    }
+
+    function loadQuestion(index) {
+        currentIndex = index;
+        const currentData = database[currentIndex];
+        
+        document.getElementById('progress-indicator').innerText = `Question ${currentIndex + 1} of ${database.length}`;
+        document.getElementById('task-title').innerText = currentData.t;
+        document.getElementById('task-instruction').innerText = currentData.i;
+        document.getElementById('task-example').innerHTML = `<strong>Example:</strong> ${currentData.e}`;
+        
+        const feedback = document.getElementById('feedback-display');
+        feedback.style.display = "none";
+        document.getElementById('check-btn').disabled = false;
+        document.getElementById('next-btn').disabled = true;
+
+        const contentBox = document.getElementById('question-content');
+        
+        if (currentData.type === "select") {
+            let selectHtml = `<select class="answer-select" id="sel-ans"><option value="">-- Choose Option --</option>`;
+            currentData.opts.forEach(opt => {
+                selectHtml += `<option value="${opt}">${opt}</option>`;
+            });
+            selectHtml += `</select>`;
+            contentBox.innerHTML = currentData.q + "<br>" + selectHtml;
+        } 
+        else if (currentData.type === "text") {
+            let html = currentData.q.replace("[input]", `<input type="text" id="txt-ans" placeholder="Type answer phrase here..." autocomplete="off">`);
+            if(!currentData.q.includes("[input]")) {
+                html += `<br><input type="text" id="txt-ans" placeholder="Type answer here..." autocomplete="off">`;
+            }
+            contentBox.innerHTML = html;
+        }
+        
+        document.getElementById('jump-task').value = getTaskBaseIndex(currentIndex);
+    }
+
+    function getTaskBaseIndex(idx) {
+        if (idx <= 9) return 0;
+        if (idx <= 19) return 10;
+        if (idx <= 27) return 20;
+        return 28;
+    }
+
+    function jumpToTask(val) {
+        loadQuestion(parseInt(val));
+    }
+
+    function verifyCurrentAnswer() {
+        const currentData = database[currentIndex];
+        let isCorrect = false;
+        let studentInput = "";
+        let expectedAnswer = currentData.a;
+
+        if (currentData.type === "select") {
+            studentInput = document.getElementById('sel-ans').value;
+            isCorrect = (studentInput === expectedAnswer);
+        } 
+        else if (currentData.type === "text") {
+            studentInput = document.getElementById('txt-ans').value;
+            isCorrect = (clean(studentInput) === clean(expectedAnswer));
+        }
+
+        studentHistory[currentIndex] = {
+            qNum: currentIndex + 1,
+            task: currentData.t,
+            question: currentData.q.replace(/<[^>]*>/g, ''),
+            input: studentInput || "[No Answer Entered]",
+            status: isCorrect ? "CORRECT" : "WRONG",
+            correctValue: expectedAnswer
+        };
+
+        const feedback = document.getElementById('feedback-display');
+        feedback.style.display = "block";
+        
+        if (isCorrect) {
+            feedback.className = "feedback-box feedback-correct";
+            feedback.innerText = "🎉 Excellent! Correct Answer.";
+        } else {
+            feedback.className = "feedback-box feedback-wrong";
+            feedback.innerHTML = `❌ Incorrect. <br><span style="font-size:0.85rem; font-weight:normal;">Correct answer: <strong>${expectedAnswer}</strong></span>`;
+        }
+
+        document.getElementById('check-btn').disabled = true;
+        document.getElementById('next-btn').disabled = false;
+    }
+
+    function nextQuestion() {
+        if (currentIndex < database.length - 1) {
+            loadQuestion(currentIndex + 1);
+        } else {
+            let studentName = prompt("🎉 You have finished the vocabulary test! Please enter your Full Name to view grading summary updates:");
+            if (!studentName) studentName = "Anonymous Student";
+
+            let totalCorrect = 0;
+            let reportSummary = `Student Name: ${studentName}\n`;
+            
+            for(let i = 0; i < database.length; i++) {
+                let reportItem = studentHistory[i] || { status: "UNATTEMPTED", correctValue: database[i].a, input: "" };
+                if(reportItem.status === "CORRECT") totalCorrect++;
+                
+                reportSummary += `Q${i+1} (${reportItem.status}): Input: "${reportItem.input}" | Correct: "${reportItem.correctValue}"\n`;
+            }
+            
+            let finalPercent = Math.round((totalCorrect / database.length) * 100);
+            let finalScoreString = `Score: ${totalCorrect}/${database.length} (${finalPercent}%)`;
+            
+            // YOUR GOOGLE FORM CONFIGURATION DETAILS
+            const formURL = "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdTfqWcQvVFY1c-cs1W3IX8A9GX03sh8ZOU5KcKqe73rEvuCg/formResponse";
+            const nameID = "entry.PUT_STUDENT_NAME_ID_HERE";
+            const resultsID = "entry.PUT_QUIZ_RESULTS_ID_HERE";
+
+            const formData = new FormData();
+            formData.append(nameID, studentName);
+            formData.append(resultsID, `${finalScoreString}\n\n${reportSummary}`);
+
+            fetch(formURL, {
+                method: "POST",
+                mode: "no-cors",
+                body: formData
+            })
+            .then(() => {
+                alert(`✨ Thank you, ${studentName}!\nYour final score is ${totalCorrect}/${database.length} (${finalPercent}%).\nResults have been sent directly to your teacher.`);
+            })
+            .catch((error) => {
+                alert("Submission system notice: Please take a screenshot of your screen to hand in manually if form configuration variables are unlinked!");
+                console.error(error);
+            });
+        }
+    }
+
+    window.onload = function() {
+        loadQuestion(0);
+    };
+</script>
+</body>
+</html>
