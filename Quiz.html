@@ -35,7 +35,7 @@
 
         .nav-header {
             background: #fff;
-            padding: 12px;
+            padding: 14px;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             margin-bottom: 15px;
@@ -48,7 +48,7 @@
         }
 
         .progress-text {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #4a5568;
         }
@@ -234,62 +234,73 @@
 </div>
 
 <script>
-    const database = [
+    // Master Array List Data Structure
+    const originalDatabase = [
         // TASK 1: Places and Buildings
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "A building where sick people are treated -> Hospital", type: "select", q: "1. A place where you can buy medicine and medical items.", opts: ["Chemist's / Pharmacy", "Department store", "Town hall"], a: "Chemist's / Pharmacy" },
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "2. A very large shop divided into several sections selling different items.", opts: ["Shopping centre", "Market", "Department store"], a: "Department store" },
-        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "3. What is the English term for: <strong>Művészeti galéria</strong>?", a: "art gallery" },
-        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "4. What is the English term for: <strong>Kastély / Vár</strong>?", a: "castle" },
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "5. An open area in a town, usually square in shape, surrounded by buildings.", opts: ["Square", "Bridge", "Market"], a: "Square" },
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "6. A structure built over a river or road so people or vehicles can cross.", opts: ["Town hall", "Bridge", "Railway station"], a: "Bridge" },
-        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "7. What is the English term for: <strong>Városháza</strong>?", a: "town hall" },
-        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "8. What is the English term for: <strong>Rendőrkapitányság</strong>?", a: "police station" },
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "9. An outdoor or indoor area where people buy and sell fresh food and items.", opts: ["Market", "Museum", "Department store"], a: "Market" },
-        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "10. A building where objects of historical, scientific, or artistic interest are kept.", opts: ["Museum", "Town hall", "Police station"], a: "Museum" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "A building where sick people are treated -> Hospital", type: "select", q: "A place where you can buy medicine and medical items.", opts: ["Chemist's / Pharmacy", "Department store", "Town hall"], a: "Chemist's / Pharmacy" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "A very large shop divided into several sections selling different items.", opts: ["Shopping centre", "Market", "Department store"], a: "Department store" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "What is the English term for: <strong>Művészeti galéria</strong>?", a: "art gallery" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "What is the English term for: <strong>Kastély / Vár</strong>?", a: "castle" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "An open area in a town, usually square in shape, surrounded by buildings.", opts: ["Square", "Bridge", "Market"], a: "Square" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "A structure built over a river or road so people or vehicles can cross.", opts: ["Town hall", "Bridge", "Railway station"], a: "Bridge" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "What is the English term for: <strong>Városháza</strong>?", a: "town hall" },
+        { t: "Task 1: Places and Buildings", i: "Translate the building term to English.", e: "Kastély / Vár -> Castle", type: "text", q: "What is the English term for: <strong>Rendőrkapitányság</strong>?", a: "police station" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "An outdoor or indoor area where people buy and sell fresh food and items.", opts: ["Market", "Museum", "Department store"], a: "Market" },
+        { t: "Task 1: Places and Buildings", i: "Choose the correct place description.", e: "Hospital -> Kórház", type: "select", q: "A building where objects of historical, scientific, or artistic interest are kept.", opts: ["Museum", "Town hall", "Police station"], a: "Museum" },
 
         // TASK 2: Travel and Holidays
-        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "11. If you want to check out famous historical places in a new city, you go ______.", opts: ["sightseeing", "accommodation", "experiences"], a: "sightseeing" },
-        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "12. Before going to the airport, you must pack your ______.", opts: ["suitcase", "hotel", "flight"], a: "suitcase" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "13. Complete the English phrase for: <strong>Repülőjegyet foglal</strong>.<br>Book a [input]", a: "flight" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "14. What is the English term for a list of things you want to do before you die: <strong>Bakancslista</strong>?", a: "bucket list" },
-        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "15. Europe, Asia, and Africa are examples of a ______.", opts: ["continent", "experience", "accommodation"], a: "continent" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "16. Complete the English phrase for: <strong>Jól érzi magát</strong>.<br>Have a good [input]", a: "time" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "17. Complete the English phrase for: <strong>Új emberekkel ismerkedik meg</strong>.<br>Meet new [input]", a: "people" },
-        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "18. Instead of an expensive hotel, budget travelers often choose to stay in a cheap ______.", opts: ["hostel", "flat", "continent"], a: "hostel" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "19. Complete the phrase: <strong>Elmegy szórakozni éjszaka</strong>.<br>Go ______ at night", opts: ["out", "by", "to"], a: "out" },
-        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "20. Complete the phrase: <strong>Vonattal megy</strong>.<br>Go ______ train", opts: ["by", "with", "on"], a: "by" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "If you want to check out famous historical places in a new city, you go ______.", opts: ["sightseeing", "accommodation", "experiences"], a: "sightseeing" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "Before going to the airport, you must pack your ______.", opts: ["suitcase", "hotel", "flight"], a: "suitcase" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "Complete the English phrase for: <strong>Repülőjegyet foglal</strong>.<br>Book a [input]", a: "flight" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "What is the English term for a list of things you want to do before you die: <strong>Bakancslista</strong>?", a: "bucket list" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "Europe, Asia, and Africa are examples of a ______.", opts: ["continent", "experience", "accommodation"], a: "continent" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "Complete the English phrase for: <strong>Jól érzi magát</strong>.<br>Have a good [input]", a: "time" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "Complete the English phrase for: <strong>Új emberekkel ismerkedik meg</strong>.<br>Meet new [input]", a: "people" },
+        { t: "Task 2: Travel and Holidays", i: "Fill in the missing word in the travel collocation phrase.", e: "Book a flight", type: "select", q: "Instead of an expensive hotel, budget travelers often choose to stay in a cheap ______.", opts: ["hostel", "flat", "continent"], a: "hostel" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "Complete the phrase: <strong>Elmegy szórakozni éjszaka</strong>.<br>Go ______ at night", opts: ["out", "by", "to"], a: "out" },
+        { t: "Task 2: Travel and Holidays", i: "Translate the travel phrase into English.", e: "Autót bérel -> Hire a car / Rent a car", type: "text", q: "Complete the phrase: <strong>Vonattal megy</strong>.<br>Go ______ train", opts: ["by", "with", "on"], a: "by" },
 
         // TASK 3: Adverbs
-        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "21. She speaks English perfectly and without stopping. She speaks ______.", opts: ["fluently", "quietly", "politely"], a: "fluently" },
-        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "22. The traffic was moving very slowly, so we arrived late. What is the adverb?", opts: ["slowly", "dangerously", "carefully"], a: "slowly" },
-        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "23. How do you say <strong>Óvatosan / Gondosan</strong> in English?", a: "carefully" },
-        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "24. How do you say <strong>Veszélyesen</strong> in English?", a: "dangerously" },
-        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "25. He eats organic fruits and exercises daily. He lives ______.", opts: ["healthily", "incredibly", "quietly"], a: "healthily" },
-        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "26. Please talk ______ in the library so you do not disturb others.", opts: ["quietly", "dangerously", "fluently"], a: "quietly" },
-        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "27. How do you say <strong>Udvariasan</strong> in English?", a: "politely" },
-        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "28. How do you say <strong>Hihetetlenül</strong> in English?", a: "incredibly" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "She speaks English perfectly and without stopping. She speaks ______.", opts: ["fluently", "quietly", "politely"], a: "fluently" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "The traffic was moving very slowly, so we arrived late. What is the adverb?", opts: ["slowly", "dangerously", "carefully"], a: "slowly" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "How do you say <strong>Óvatosan / Gondosan</strong> in English?", a: "carefully" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "How do you say <strong>Veszélyesen</strong> in English?", a: "dangerously" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "He eats organic fruits and exercises daily. He lives ______.", opts: ["healthily", "incredibly", "quietly"], a: "healthily" },
+        { t: "Task 3: Adverbs", i: "Choose the correct adverb modifier.", e: "Slowly -> Lassan", type: "select", q: "Please talk ______ in the library so you do not disturb others.", opts: ["quietly", "dangerously", "fluently"], a: "quietly" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "How do you say <strong>Udvariasan</strong> in English?", a: "politely" },
+        { t: "Task 3: Adverbs", i: "Translate the adverb to English.", e: "Slowly -> Lassan", type: "text", q: "How do you say <strong>Hihetetlenül</strong> in English?", a: "incredibly" },
 
         // TASK 4: Verbs and Phrases
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "29. If you make a lot of movies and everyone knows your name, you ______.", opts: ["become famous", "fall in love", "pay bills"], a: "become famous" },
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "30. The feeling of confusion when visiting a brand-new country is a ______.", opts: ["culture shock", "tipping system", "surprise"], a: "culture shock" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "31. Translate the phrase: <strong>Megígéri, hogy felhívja</strong>.<br>[input] to call", a: "promise" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "32. Translate the phrase: <strong>Elfelejti bezárni</strong>.<br>[input] to lock", a: "forget" },
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "33. Every month, I have to open my bank account and ______ for water and electricity.", opts: ["pay bills", "earn money", "rent a flat"], a: "pay bills" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "34. Translate the phrase: <strong>Megjósolja a jövőt</strong>.<br>[input] the future", a: "predict" },
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "35. The money you receive every month from your regular job is your ______.", opts: ["salary", "rent", "insurance"], a: "salary" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "36. Complete the phrase: <strong>Valóra vált egy álmot</strong>.<br>Make a dream ______ true", opts: ["come", "go", "be"], a: "come" },
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "37. When it is very cold outside, you should always ______.", opts: ["dress warmly", "travel safely", "work hard"], a: "dress warmly" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "38. Complete the phrase: <strong>Szerelembe esik</strong>.<br>______ in love", opts: ["fall", "get", "become"], a: "fall" },
-        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "39. Complete the phrase: <strong>Megházasodik</strong>.<br>______ married", opts: ["get", "have", "make"], a: "get" },
-        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "40. In restaurants, custom sets a rules protocol for leaving extra cash called a ______.", opts: ["tipping system", "salary", "insurance"], a: "tipping system" }
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "If you make a lot of movies and everyone knows your name, you ______.", opts: ["become famous", "fall in love", "pay bills"], a: "become famous" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "The feeling of confusion when visiting a brand-new country is a ______.", opts: ["culture shock", "tipping system", "surprise"], a: "culture shock" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Translate the phrase: <strong>Megígéri, hogy felhívja</strong>.<br>[input] to call", a: "promise" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Translate the phrase: <strong>Elfelejti bezárni</strong>.<br>[input] to lock", a: "forget" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "Every month, I have to open my bank account and ______ for water and electricity.", opts: ["pay bills", "earn money", "rent a flat"], a: "pay bills" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Translate the phrase: <strong>Megjósolja a jövőt</strong>.<br>[input] the future", a: "predict" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "The money you receive every month from your regular job is your ______.", opts: ["salary", "rent", "insurance"], a: "salary" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Complete the phrase: <strong>Valóra vált egy álmot</strong>.<br>Make a dream ______ true", opts: ["come", "go", "be"], a: "come" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "When it is very cold outside, you should always ______.", opts: ["dress warmly", "travel safely", "work hard"], a: "dress warmly" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Complete the phrase: <strong>Szerelembe esik</strong>.<br>______ in love", opts: ["fall", "get", "become"], a: "fall" },
+        { t: "Task 4: Verbs and Phrases", i: "Translate the verb structure pattern.", e: "Learn to drive -> Megtanul vezetni", type: "text", q: "Complete the phrase: <strong>Megházasodik</strong>.<br>______ married", opts: ["get", "have", "make"], a: "get" },
+        { t: "Task 4: Verbs and Phrases", i: "Complete the sentence with the correct phrase configuration.", e: "Learn to drive -> Megtanul vezetni", type: "select", q: "In restaurants, custom sets a rules protocol for leaving extra cash called a ______.", opts: ["tipping system", "salary", "insurance"], a: "tipping system" }
     ];
 
+    let database = []; // Populated via runtime randomization routines
     let currentIndex = 0;
     let studentHistory = [];
     let globalStudentName = "";
     
     let questionTimer = null;
     let secondsLeft = 20;
+
+    // Fisher-Yates Array Shuffle Logic Engine
+    function shuffleDatabase(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
 
     function clean(str) {
         return str.trim().toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").replace(/’/g, "'");
@@ -321,6 +332,9 @@
         globalStudentName = inputName;
         document.getElementById('name-overlay').style.display = 'none';
         document.getElementById('main-app-wrapper').style.display = 'block';
+        
+        // Randomize list exactly when the unique student authenticates access
+        database = shuffleDatabase([...originalDatabase]);
         loadQuestion(0);
     }
 
@@ -448,7 +462,7 @@
             studentHistory.forEach(item => { if(item && item.status === "CORRECT") totalCorrect++; });
             let finalScoreString = `${totalCorrect}/${database.length}`;
 
-            // GOOGLE FORMS TRANSMISSION SYSTEM - UPDATED AUTOMATICALLY
+            // GOOGLE FORMS TRANSMISSION PIPELINE
             const GOOGLE_FORM_RESPONSE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdTfqWcQvVFY1c-cs1W3IX8A9GX03sh8ZOU5KcKqe73rEvuCg/formResponse"; 
             const NAME_ENTRY_ID = "entry.1661336894";
             const SCORE_ENTRY_ID = "entry.1045661650";
