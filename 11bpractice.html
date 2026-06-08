@@ -3,910 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smartboard English Review</title>
+    <title>Quizizz Class Challenge!</title>
     <style>
         :root {
-            --primary: #3a86ff;
-            --secondary: #8338ec;
-            --success: #38b000;
-            --danger: #d90429;
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --text: #212529;
+            --quizizz-purple: #461a42;
+            --quizizz-light: #8854c0;
+            --quizizz-button: #2d132c;
+            --success: #00c985;
+            --danger: #ff4552;
+            --bg: #1e0322;
+            --card: #2b0b30;
+            --text: #ffffff;
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
-            justify-center: center;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
-        .container {
+        .quizizz-container {
             width: 100%;
-            max-width: 1000px;
+            max-width: 850px;
             background: var(--card);
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            padding: 30px;
             box-sizing: border-box;
-        }
-
-        /* Top Bar Navigation & Progress */
-        .header-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-        }
-
-        .task-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--secondary);
-            margin: 0;
-        }
-
-        .score-badge {
-            background: var(--primary);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 30px;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-
-        .instruction {
-            font-size: 1.2rem;
-            color: #6c757d;
-            font-style: italic;
-            margin-bottom: 25px;
-            text-align: left;
-            background: #f1f3f5;
-            padding: 10px 15px;
-            border-left: 5px solid var(--primary);
-        }
-
-        /* Question Layout */
-        .question-box {
-            font-size: 2rem;
-            font-weight: 600;
-            line-height: 1.5;
-            margin-bottom: 35px;
-            text-align: left;
-            padding: 10px;
-        }
-
-        .highlight-gap {
-            color: var(--primary);
-            text-decoration: underline;
-            font-weight: 700;
-        }
-
-        /* Large Smartboard Buttons */
-        .choices-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        @media (min-width: 768px) {
-            .choices-container.split {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .choice-btn {
-            background: #f8f9fa;
-            border: 3px solid #dee2e6;
-            border-radius: 14px;
-            padding: 22px 30px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            touch-action: manipulation;
-        }
-
-        .choice-btn:hover {
-            background: #e9ecef;
-            border-color: #ced4da;
-            transform: scale(1.01);
-        }
-
-        .choice-btn.correct {
-            background-color: #d8f3dc !important;
-            border-color: var(--success) !important;
-            color: #1b4332 !important;
-        }
-
-        .choice-btn.wrong {
-            background-color: #fcd5ce !important;
-            border-color: var(--danger) !important;
-            color: #641111 !important;
-        }
-
-        /* Action Panel */
-        .action-panel {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-            border-top: 2px solid #e9ecef;
-            padding-top: 20px;
-        }
-
-        .progress-text {
-            font-size: 1.2rem;
-            color: #495057;
-            font-weight: 600;
-        }
-
-        .control-btn {
-            background: #212529;
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            display: none;
-        }
-
-        .control-btn:hover {
-            opacity: 0.9;
-        }
-
-        /* Finished Screen */
-        .end-screen {
-            display: none;
+            border: 4px solid var(--quizizz-light);
             text-align: center;
-            padding: 40px 10px;
+            position: relative;
         }
 
-        .end-title {
-            font-size: 3rem;
-            color: var(--success);
+        /* Quizizz Top HUD */
+        .hud-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
         }
 
-        .final-score-display {
-            font-size: 5rem;
+        .task-tag {
+            background: var(--quizizz-light);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .score-box {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #ffca28;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Streak / Combo Counter */
+        .streak-banner {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff9100;
+            margin-bottom: 10px;
+            min-height: 24px;
+            transition: all 0.3s ease;
+        }
+
+        /* Progress Tracker Bar */
+        .progress-container {
+            width: 100%;
+            background: #461a42;
+            height: 14px;
+            border-radius: 7px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 2px solid #5d2558;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff4552, #8854c0, #00c985);
+            transition: width 0.4s ease-out;
+        }
+
+        /* Question Box */
+        .instruction-text {
+            font-size: 1.1rem;
+            color: #b9a3be;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .question-card {
+            background: var(--quizizz-purple);
+            padding: 30px 20px;
+            border-radius: 16px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            line-height: 1.4;
+            margin-bottom: 30px;
+            border-bottom: 6px solid #31112e;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .gap-fill {
+            color: #ffca28;
+            text-decoration: underline;
+        }
+
+        /* 3 Choices Layout (Large Quizizz Style Buttons) */
+        .choices-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .quizizz-btn {
+            background: var(--quizizz-button);
+            color: white;
+            border: 3px solid #52264e;
+            border-radius: 16px;
+            padding: 20px 25px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-align: center;
+            touch-action: manipulation;
+            box-shadow: 0 6px 0 #1b0a1a;
+            position: relative;
+        }
+
+        .quizizz-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #1b0a1a;
+        }
+
+        /* Quizizz Interactive States */
+        .quizizz-btn.correct {
+            background-color: var(--success) !important;
+            border-color: #00ebd3 !important;
+            box-shadow: 0 6px 0 #00875a !important;
+            color: white !important;
+            transform: scale(1.02);
+        }
+
+        .quizizz-btn.wrong {
+            background-color: var(--danger) !important;
+            border-color: #ff7680 !important;
+            box-shadow: 0 6px 0 #b3242e !important;
+            color: white !important;
+            opacity: 0.7;
+        }
+
+        /* Next Screen Action button */
+        .next-panel {
+            margin-top: 25px;
+            min-height: 60px;
+        }
+
+        .action-btn {
+            background: #ffffff;
+            color: var(--bg);
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.4rem;
             font-weight: 900;
-            margin: 30px 0;
-            color: var(--primary);
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #cccccc;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #cccccc;
+        }
+
+        /* Leaderboard / End Game Screen */
+        .end-screen {
+            display: none;
+            padding: 30px 10px;
+        }
+
+        .trophy {
+            font-size: 5rem;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .final-score {
+            font-size: 4.5rem;
+            font-weight: 900;
+            color: #ffca28;
+            margin: 20px 0;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Main Quiz Interface -->
-        <div id="quiz-flow">
-            <div class="header-panel">
-                <div class="task-title" id="task-header">TASK 1: GRAMMAR</div>
-                <div class="score-badge" id="live-score">Score: 0</div>
+    <div class="quizizz-container">
+        <!-- Live Game Mode -->
+        <div id="game-arena">
+            <div class="hud-panel">
+                <div class="task-tag" id="hud-task">Task 1: Grammar</div>
+                <div class="score-box" id="hud-score">✨ 0 Points</div>
             </div>
 
-            <div class="instruction" id="task-instruction">
-                Complete the sentences. Use the correct form of the verb in brackets.
+            <div class="streak-banner" id="streak-box">🔥 Combo Streak: 0</div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-indicator"></div>
             </div>
 
-            <div class="question-box" id="question-text">
-                Loading first challenge...
+            <div class="instruction-text" id="hud-instruction">Instruction loading...</div>
+            <div class="question-card" id="hud-question">Question placeholder text...</div>
+
+            <!-- Quizizz format: exactly 3 choice fields -->
+            <div class="choices-grid" id="choices-box">
+                <button class="quizizz-btn">Choice 1</button>
+                <button class="quizizz-btn">Choice 2</button>
+                <button class="quizizz-btn">Choice 3</button>
             </div>
 
-            <div class="choices-container split" id="choices-box">
-                <!-- Smartboard choice buttons populate here -->
-            </div>
-
-            <div class="action-panel">
-                <div class="progress-text" id="step-tracker">Question 1 of 50</div>
-                <button class="control-btn" id="action-btn" onclick="handleActionClick()">Next ➡️</button>
+            <div class="next-panel">
+                <button class="action-btn" id="next-btn" onclick="moveToNext()">Next Question ⚡</button>
             </div>
         </div>
 
-        <!-- End Game Screen -->
-        <div id="end-flow" class="end-screen">
-            <div class="end-title">🎉 Class Challenge Complete! 🎉</div>
-            <p style="font-size: 1.5rem; color: #495057;">Outstanding collaboration on our final day of school!</p>
-            <div class="final-score-display" id="final-tally">0 / 0</div>
-            <p id="holiday-message" style="font-size: 1.6rem; font-weight: bold; color: var(--secondary);"></p>
-            <button class="choice-btn" style="text-align:center; margin-top:30px; background: var(--primary); color:white; border:none;" onclick="location.reload()">Restart Game 🔄</button>
+        <!-- End Game Mode -->
+        <div id="end-arena" class="end-screen">
+            <div class="trophy">🏆</div>
+            <h1 style="font-size: 2.5rem; color: white;">Game Over!</h1>
+            <p style="font-size: 1.4rem; color: #b9a3be;">Awesome job reviewing on our last day of school!</p>
+            <div class="final-score" id="final-tally">0 / 0</div>
+            <h2 id="final-comment" style="color: #ffca28;">⭐⭐⭐</h2>
+            <button class="quizizz-btn" style="margin-top: 30px; background: var(--success); box-shadow: 0 6px 0 #00875a;" onclick="location.reload()">Play Again 🔄</button>
         </div>
     </div>
 
     <script>
-        // Whole exam broken down step-by-step, section-by-section
-        const masterExam = [
-            // ================= TASK 1 =================
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "You’re late! I <span class='highlight-gap'>______________</span> here in the cold for 20 minutes. (stand)",
-                options: ["stood", "have been standing", "am standing", "was standing"],
-                ans: "have been standing"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "If you don’t buy the tickets soon, they <span class='highlight-gap'>______________</span> out. (sell)",
-                options: ["sell", "will sell", "are selling", "sold"],
-                ans: "will sell"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Pretending <span class='highlight-gap'>______________</span> injured in a tackle is a bad idea, but footballers often do it. (be)",
-                options: ["to be", "being", "be", "to being"],
-                ans: "to be"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "What <span class='highlight-gap'>______________</span> you <span class='highlight-gap'>______________</span> when I called you earlier? (do)",
-                options: ["did / do", "were / doing", "have / done", "are / doing"],
-                ans: "were / doing"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Tim’s a freelance software designer. He <span class='highlight-gap'>______________</span> for himself since 2016. (work)",
-                options: ["works", "is working", "has been working", "worked"],
-                ans: "has been working"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Andrew <span class='highlight-gap'>______________</span> Nepal in 2014, the year before the terrible earthquake. (visit)",
-                options: ["visited", "has visited", "was visiting", "had visited"],
-                ans: "visited"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Our sales <span class='highlight-gap'>______________</span> as soon as we create our website. (improve)",
-                options: ["improve", "improved", "will improve", "are improving"],
-                ans: "will improve"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Anthony said he <span class='highlight-gap'>______________</span> sorry but I didn’t believe him. (be)",
-                options: ["is", "was", "has been", "would be"],
-                ans: "was"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "Remember <span class='highlight-gap'>______________</span> me when you get to the hotel. (call)",
-                options: ["to call", "calling", "call", "to calling"],
-                ans: "to call"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "That cake <span class='highlight-gap'>______________</span> wonderful! (smell)",
-                options: ["smell", "is smelling", "smells", "smelled"],
-                ans: "smells"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "I think the children <span class='highlight-gap'>______________</span> by the police in the next episode, don’t you? (rescue)",
-                options: ["will rescue", "are rescuing", "will be rescued", "rescue"],
-                ans: "will be rescued"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "The concert <span class='highlight-gap'>______________</span> just <span class='highlight-gap'>______________</span> and they won’t let us into the hall. (start)",
-                options: ["has / started", "is / starting", "was / starting", "did / start"],
-                ans: "has / started"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "<span class='highlight-gap'>______________</span> cookery programmes on TV makes me hungry. (watch)",
-                options: ["Watch", "Watching", "To watching", "Watched"],
-                ans: "Watching"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "<span class='highlight-gap'>______________</span> you <span class='highlight-gap'>______________</span> that restaurant if you’d read the reviews? (book)",
-                options: ["Would / book", "Had / booked", "Would / have booked", "Did / book"],
-                ans: "Would / have booked"
-            },
-            {
-                task: "1. GRAMMAR (Verb Forms)",
-                inst: "Complete the sentences. Use the correct form of the verb in brackets.",
-                q: "If you’re stressed, please let me <span class='highlight-gap'>______________</span> you. (help)",
-                options: ["help", "to help", "helping", "helped"],
-                ans: "help"
-            },
+        // Custom 3-choice map matching your original structural content parameters
+        const quizizzData = [
+            // --- TASK 1 ---
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "You’re late! I <span class='gap-fill'>______________</span> here in the cold for 20 minutes.", options: ["stood", "have been standing", "am standing"], ans: "have been standing" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "If you don’t buy the tickets soon, they <span class='gap-fill'>______________</span> out.", options: ["will sell", "sell", "sold"], ans: "will sell" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Pretending <span class='gap-fill'>______________</span> injured in a tackle is a bad idea.", options: ["being", "to be", "be"], ans: "to be" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "What <span class='gap-fill'>______________</span> you doing when I called you earlier?", options: ["were", "did", "are"], ans: "were" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Tim’s a freelance software designer. He <span class='gap-fill'>______________</span> for himself since 2016.", options: ["works", "has been working", "is working"], ans: "has been working" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Andrew <span class='gap-fill'>______________</span> Nepal in 2014, the year before the earthquake.", options: ["visited", "has visited", "was visiting"], ans: "visited" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Our sales <span class='gap-fill'>______________</span> as soon as we create our website.", options: ["improve", "will improve", "improved"], ans: "will improve" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Anthony said he <span class='gap-fill'>______________</span> sorry but I didn’t believe him.", options: ["is", "was", "would be"], ans: "was" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Remember <span class='gap-fill'>______________</span> me when you get to the hotel.", options: ["to call", "calling", "call"], ans: "to call" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "That cake <span class='gap-fill'>______________</span> wonderful!", options: ["smell", "is smelling", "smells"], ans: "smells" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "I think the children <span class='gap-fill'>______________</span> by the police in the next episode.", options: ["will rescue", "will be rescued", "are rescuing"], ans: "will be rescued" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "The concert <span class='gap-fill'>______________</span> just started and they won’t let us in.", options: ["has", "is", "was"], ans: "has" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "<span class='gap-fill'>______________</span> cookery programmes on TV makes me hungry.", options: ["Watch", "Watching", "To watch"], ans: "Watching" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "Would you <span class='gap-fill'>______________</span> that restaurant if you’d read the reviews?", options: ["have booked", "book", "booked"], ans: "have booked" },
+            { task: "Task 1: Grammar", inst: "Complete the sentences. Choose the correct form of the verb.", q: "If you’re stressed, please let me <span class='gap-fill'>______________</span> you.", options: ["help", "to help", "helping"], ans: "help" },
 
-            // ================= TASK 2 =================
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "There are only <span class='highlight-gap'>________ ________</span> people in the world who have been in space.",
-                options: ["too many", "a few", "a little", "few choices"],
-                ans: "a few"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "That was hilarious! I think that was <span class='highlight-gap'>________ ________</span> film I’ve ever seen.",
-                options: ["the funnier", "funniest ever", "the funniest", "most funny"],
-                ans: "the funniest"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "<span class='highlight-gap'>________ ________</span> to see each other again?",
-                options: ["Are they going", "Will they", "Do they", "Have they gone"],
-                ans: "Are they going"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "That <span class='highlight-gap'>________ ________</span> my old colleague Moya over there, but I’m not sure.",
-                options: ["must be", "might be", "can't be", "should be"],
-                ans: "might be"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "Bella would tell us if she was feeling insecure, <span class='highlight-gap'>________ ________</span>?",
-                options: ["would she", "wouldn't she", "will she", "isn't she"],
-                ans: "wouldn't she"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "She <span class='highlight-gap'>________ ________</span> if I knew you but I said I didn’t.",
-                options: ["said me", "told to", "asked me", "asked for"],
-                ans: "asked me"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "When I was at school, we <span class='highlight-gap'>________ ________</span> do lots of homework at the library.",
-                options: ["used to", "use to", "were used", "did used"],
-                ans: "used to"
-            },
-            {
-                task: "2. GRAMMAR (Two Word Gaps)",
-                inst: "Complete the sentences with exactly two words.",
-                q: "There are <span class='highlight-gap'>________ ________</span> cars in town on Saturdays. There’s nowhere to park.",
-                options: ["too much", "so much", "too many", "a lot"],
-                ans: "too many"
-            },
+            // --- TASK 2 ---
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "There are only <span class='gap-fill'>________ ________</span> people in the world who have been in space.", options: ["too many", "a few", "a little"], ans: "a few" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "That was hilarious! I think that was <span class='gap-fill'>________ ________</span> film I’ve ever seen.", options: ["the funnier", "the funniest", "most funny"], ans: "the funniest" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "<span class='gap-fill'>________ ________</span> to see each other again?", options: ["Are they going", "Will they", "Do they go"], ans: "Are they going" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "That <span class='gap-fill'>________ ________</span> my old colleague Moya over there, but I’m not sure.", options: ["must be", "can't be", "might be"], ans: "might be" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "Bella would tell us if she was feeling insecure, <span class='gap-fill'>________ ________</span>?", options: ["would she", "wouldn't she", "won't she"], ans: "wouldn't she" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "She <span class='gap-fill'>________ ________</span> if I knew you but I said I didn’t.", options: ["said me", "told me", "asked me"], ans: "asked me" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "When I was at school, we <span class='gap-fill'>________ ________</span> do lots of homework at the library.", options: ["used to", "use to", "were used"], ans: "used to" },
+            { task: "Task 2: Two Words", inst: "Complete the sentences with exactly two words.", q: "There are <span class='gap-fill'>________ ________</span> cars in town on Saturdays. There’s nowhere to park.", options: ["too much", "too many", "so much"], ans: "too many" },
 
-            // ================= TASK 3 =================
-            {
-                task: "3. GRAMMAR (Sentence Transformation)",
-                inst: "Combine the sentences while retaining the original meaning.",
-                q: "Chantelle makes costumes for films. She wanted to act when she was little.",
-                options: [
-                    "Chantelle wanted to act when she makes costumes for films.",
-                    "Chantelle, who wanted to act when she was little, makes costumes for films.",
-                    "Chantelle makes costumes for films who wanted to act when she was little."
-                ],
-                ans: "Chantelle, who wanted to act when she was little, makes costumes for films."
-            },
-            {
-                task: "3. GRAMMAR (Sentence Transformation)",
-                inst: "Combine the sentences while retaining the original meaning.",
-                q: "I hope I see you at the conference. I want to introduce you to Malek.",
-                options: [
-                    "If I see you at the conference, I will introduce you to Malek.",
-                    "If I saw you at the conference, I want to introduce you to Malek.",
-                    "If I see you at the conference, I introduced you to Malek."
-                ],
-                ans: "If I see you at the conference, I will introduce you to Malek."
-            },
-            {
-                task: "3. GRAMMAR (Sentence Transformation)",
-                inst: "Combine the sentences while retaining the original meaning.",
-                q: "Mushu is in Florence. It’s a very expensive restaurant.",
-                options: [
-                    "Mushu is in Florence where is a very expensive restaurant.",
-                    "Mushu, which is in Florence, is a very expensive restaurant.",
-                    "Mushu is an expensive restaurant who is in Florence."
-                ],
-                ans: "Mushu, which is in Florence, is a very expensive restaurant."
-            },
-            {
-                task: "3. GRAMMAR (Sentence Transformation)",
-                inst: "Combine the sentences while retaining the original meaning.",
-                q: "My neighbour has complained about our party. His children are really noisy.",
-                options: [
-                    "My neighbour, whose children are really noisy, has complained about our party.",
-                    "My neighbour has complained about our party who has noisy children.",
-                    "My neighbour which children are noisy complained about our party."
-                ],
-                ans: "My neighbour, whose children are really noisy, has complained about our party."
-            },
-            {
-                task: "3. GRAMMAR (Sentence Transformation)",
-                inst: "Combine the sentences while retaining the original meaning.",
-                q: "I can’t afford that car. I wish I could buy it.",
-                options: [
-                    "If I can afford that car, I wish I buy it.",
-                    "If I could afford that car, I would buy it.",
-                    "If I afford that car, I will buy it."
-                ],
-                ans: "If I could afford that car, I would buy it."
-            },
+            // --- TASK 3 ---
+            { task: "Task 3: Transformation", inst: "Pick the best relative clause connection combination.", q: "Chantelle makes costumes for films. She wanted to act when she was little.", options: ["Chantelle wanted to act when she makes costumes.", "Chantelle, who wanted to act when she was little, makes costumes for films.", "Chantelle makes costumes for films who wanted to act."], ans: "Chantelle, who wanted to act when she was little, makes costumes for films." },
+            { task: "Task 3: Transformation", inst: "Pick the correct conditional structure.", q: "I hope I see you at the conference. I want to introduce you to Malek.", options: ["If I see you at the conference, I will introduce you to Malek.", "If I saw you at the conference, I want to introduce you.", "If I see you at the conference, I introduced you."], ans: "If I see you at the conference, I will introduce you to Malek." },
+            { task: "Task 3: Transformation", inst: "Pick the best relative clause connection combination.", q: "Mushu is in Florence. It’s a very expensive restaurant.", options: ["Mushu is in Florence where is a very expensive restaurant.", "Mushu, which is in Florence, is a very expensive restaurant.", "Mushu is an expensive restaurant who is in Florence."], ans: "Mushu, which is in Florence, is a very expensive restaurant." },
 
-            // ================= TASK 4 =================
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "I’m sorry, <span class='highlight-gap'>______________</span> you.",
-                options: ["I’m not recognizing", "I don’t recognize"],
-                ans: "I don’t recognize"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "What do you call the words at the end of a film <span class='highlight-gap'>______________</span> show all the jobs?",
-                options: ["where", "that"],
-                ans: "that"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "The eggs are <span class='highlight-gap'>______________</span> for ten minutes. Meanwhile, prepare the toast.",
-                options: ["boiled", "to boil"],
-                ans: "boiled"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "Max said <span class='highlight-gap'>______________</span> loved Indian food so I’ve cooked a curry.",
-                options: ["Max", "he"],
-                ans: "he"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "I don’t usually enjoy <span class='highlight-gap'>______________</span> crime novels. But I loved this one.",
-                options: ["enjoy", "enjoying"],
-                ans: "enjoying"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "You’re <span class='highlight-gap'>______________</span> at dancing than me.",
-                options: ["worse", "really bad"],
-                ans: "worse"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "I like travelling abroad for work but I hate <span class='highlight-gap'>______________</span> my children.",
-                options: ["not seeing", "don’t see"],
-                ans: "not seeing"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "Everything <span class='highlight-gap'>______________</span> fine.",
-                options: ["is going to be", "being"],
-                ans: "is going to be"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "Tim <span class='highlight-gap'>______________</span> sick. He never misses football training.",
-                options: ["can’t be", "must be"],
-                ans: "must be"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "We <span class='highlight-gap'>______________</span> you at the match, won’t we?",
-                options: ["’ll see", "going to see"],
-                ans: "’ll see"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "If you like the flat, you <span class='highlight-gap'>______________</span> rent it.",
-                options: ["should", "might"],
-                ans: "should"
-            },
-            {
-                task: "4. GRAMMAR (Underline Option)",
-                inst: "Select the grammatically correct phrase option.",
-                q: "Didn’t you <span class='highlight-gap'>______________</span> a car like that one?",
-                options: ["used to have", "use to have"],
-                ans: "use to have"
-            },
+            // --- TASK 4 ---
+            { task: "Task 4: Structural Grammar", inst: "Choose the correct phrase selection.", q: "I’m sorry, <span class='gap-fill'>______________</span> you.", options: ["I’m not recognizing", "I don’t recognize", "I haven't recognized"], ans: "I don’t recognize" },
+            { task: "Task 4: Structural Grammar", inst: "Choose the correct phrase selection.", q: "What do you call the words at the end of a film <span class='gap-fill'>______________</span> show all the jobs?", options: ["where", "that", "who"], ans: "that" },
+            { task: "Task 4: Structural Grammar", inst: "Choose the correct phrase selection.", q: "The eggs are <span class='gap-fill'>______________</span> for ten minutes. Meanwhile, prepare the toast.", options: ["boiled", "to boil", "boiling"], ans: "boiled" },
+            { task: "Task 4: Structural Grammar", inst: "Choose the correct phrase selection.", q: "Max said <span class='gap-fill'>______________</span> loved Indian food so I’ve cooked a curry.", options: ["Max", "he", "him"], ans: "he" },
 
-            // ================= TASK 5 =================
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **do**",
-                options: ["money to a friend", "at a joke", "a business", "yoga"],
-                ans: "yoga"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **play**",
-                options: ["something is true", "a part in a film", "a salary", "money from the bank"],
-                ans: "a part in a film"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **prove**",
-                options: ["something is true", "a business", "at a joke", "a salary"],
-                ans: "something is true"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **laugh**",
-                options: ["a part in a film", "at a joke", "money to a friend", "yoga"],
-                ans: "at a joke"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **earn**",
-                options: ["money from the bank", "something is true", "a salary", "a business"],
-                ans: "a salary"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **run**",
-                options: ["a part in a film", "yoga", "a business", "at a joke"],
-                ans: "a business"
-            },
-            {
-                task: "5. VOCABULARY (Collocations)",
-                inst: "Match the action verb with the appropriate item phrase.",
-                q: "Find the correct match for: **lend**",
-                options: ["money to a friend", "money from the bank", "a salary", "something is true"],
-                ans: "money to a friend"
-            },
+            // --- TASK 5 ---
+            { task: "Task 5: Collocations", inst: "Match the phrase element that fits with the action verb.", q: "Find the structural match for: **'do'**", options: ["money to a friend", "a business", "yoga"], ans: "yoga" },
+            { task: "Task 5: Collocations", inst: "Match the phrase element that fits with the action verb.", q: "Find the structural match for: **'play'**", options: ["a part in a film", "something is true", "a salary"], ans: "a part in a film" },
 
-            // ================= TASK 6 =================
-            {
-                task: "6. VOCABULARY (Odd Word Out)",
-                inst: "Identify the word that doesn't fit in the theme group.",
-                q: "Theme: Film Production. Which word is the odd one out?",
-                options: ["cast", "extra", "review", "critic"],
-                ans: "review"
-            },
-            {
-                task: "6. VOCABULARY (Odd Word Out)",
-                inst: "Identify the word that doesn't fit in the theme group.",
-                q: "Theme: Computing/Tech. Which word is the odd one out?",
-                options: ["unplug", "delete", "charger", "update"],
-                ans: "charger"
-            },
-            {
-                task: "6. VOCABULARY (Odd Word Out)",
-                inst: "Identify the word that doesn't fit in the theme group.",
-                q: "Theme: Employment Status. Which word is the odd one out?",
-                options: ["redundant", "unemployed", "resigned", "promoted"],
-                ans: "promoted"
-            },
-            {
-                task: "6. VOCABULARY (Odd Word Out)",
-                inst: "Identify the word that doesn't fit in the theme group.",
-                q: "Theme: Sports venues & Gear. Which word is the odd one out?",
-                options: ["coach", "circuit", "track", "slope"],
-                ans: "coach"
-            },
-            {
-                task: "6. VOCABULARY (Odd Word Out)",
-                inst: "Identify the word that doesn't fit in the theme group.",
-                q: "Theme: Professional roles. Which word is the odd one out?",
-                options: ["translator", "lawyer", "freelance", "musician"],
-                ans: "freelance"
-            },
+            // --- TASK 6 ---
+            { task: "Task 6: Odd One Out", inst: "Find the word that does not belong in the topic pool.", q: "Topic: Technology & Computing. Which word is out?", options: ["unplug", "charger", "delete"], ans: "charger" },
+            { task: "Task 6: Odd One Out", inst: "Find the word that does not belong in the topic pool.", q: "Topic: Career Status. Which word is out?", options: ["redundant", "unemployed", "promoted"], ans: "promoted" },
 
-            // ================= TASK 7 =================
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the correct negative/altered form of: **legal**?",
-                options: ["unlegal", "illegal", "dislegal", "legalful"],
-                ans: "illegal"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the correct form of: **hope**?",
-                options: ["hopeful", "hopeation", "dishope", "hopist"],
-                ans: "hopeful"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the correct altered form of: **honest**?",
-                options: ["unhonest", "ilhonest", "dishonest", "honestable"],
-                ans: "dishonest"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the professional noun form of: **science**?",
-                options: ["scienceian", "scientist", "scienceful", "unscience"],
-                ans: "scientist"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the proper noun variation of: **educate**?",
-                options: ["education", "educatement", "educateful", "self-educate"],
-                ans: "education"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the noun variation of: **improve**?",
-                options: ["improveation", "improveable", "improvement", "disimprove"],
-                ans: "improvement"
-            },
-            {
-                task: "7. VOCABULARY (Prefixes & Suffixes)",
-                inst: "Change the root word correctly using proper structural affixes.",
-                q: "What is the specific description adjective form of: **society**?",
-                options: ["societyist", "social", "societyment", "ilsociety"],
-                ans: "social"
-            },
+            // --- TASK 7 ---
+            { task: "Task 7: Affixes", inst: "Transform the root word with prefixes/suffixes.", q: "What is the correct negative structural variation of: **'legal'**?", options: ["unlegal", "illegal", "dislegal"], ans: "illegal" },
+            { task: "Task 7: Affixes", inst: "Transform the root word with prefixes/suffixes.", q: "What is the noun transformation of: **'improve'**?", options: ["improveation", "improveable", "improvement"], ans: "improvement" },
 
-            // ================= TASK 8 =================
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "I parked in the wrong place so I had to pay a <span class='highlight-gap'>__________</span>.",
-                options: ["fee", "fine", "ticket", "tax"],
-                ans: "fine"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "Mr Cushing wants to talk to you <span class='highlight-gap'>__________</span> your history essay.",
-                options: ["for", "with", "about", "on"],
-                ans: "about"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "<span class='highlight-gap'>__________</span> speaking, private schools are for rich families.",
-                options: ["General", "Generally", "In general", "Generous"],
-                ans: "Generally"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "I’m trying to cut <span class='highlight-gap'>__________</span> on tea and coffee.",
-                options: ["down", "off", "out", "up"],
-                ans: "down"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "On the <span class='highlight-gap'>__________</span> , I give this rom-com three stars.",
-                options: ["average", "total", "whole", "middle"],
-                ans: "whole"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "I’m <span class='highlight-gap'>__________</span> up with this traffic, aren’t you?",
-                options: ["tired", "bored", "fed", "sick"],
-                ans: "fed"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "Don’t click <span class='highlight-gap'>__________</span> links in emails if you’re not sure who sent the message.",
-                options: ["on", "at", "to", "in"],
-                ans: "on"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "I can’t choose <span class='highlight-gap'>__________</span> the soup or the pasta. What do you think?",
-                options: ["among", "between", "from", "with"],
-                ans: "between"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "It took me 45 minutes to get <span class='highlight-gap'>__________</span> my house to here. The traffic was terrible.",
-                options: ["away", "from", "out", "through"],
-                ans: "from"
-            },
-            {
-                task: "8. VOCABULARY (One Word Gaps)",
-                inst: "Complete the text sentence with the missing vocabulary term.",
-                q: "‘When did you become <span class='highlight-gap'>__________</span> in science fiction films?’ ‘When I was about 14.’",
-                options: ["interested", "keen", "fond", "fascinated"],
-                ans: "interested"
-            },
+            // --- TASK 8 ---
+            { task: "Task 8: Gaps", inst: "Fill the gap context with the proper missing unit.", q: "I parked in the wrong place so I had to pay a <span class='gap-fill'>__________</span>.", options: ["fee", "fine", "ticket"], ans: "fine" },
+            { task: "Task 8: Gaps", inst: "Fill the gap context with the proper missing unit.", q: "I’m trying to cut <span class='gap-fill'>__________</span> on tea and coffee.", options: ["down", "off", "out"], ans: "down" },
+            { task: "Task 8: Gaps", inst: "Fill the gap context with the proper missing unit.", q: "I can’t choose <span class='gap-fill'>__________</span> the soup or the pasta. What do you think?", options: ["among", "between", "from"], ans: "between" },
 
-            // ================= TASK 9 =================
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "The bus was late, which was really <span class='highlight-gap'>__________</span>.",
-                options: ["frustrated", "frustration", "frustrating"],
-                ans: "frustrating"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "James was embarrassed because his phone <span class='highlight-gap'>__________</span> during the interview.",
-                options: ["went off", "cut off", "sent off"],
-                ans: "went off"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "Ethan is a <span class='highlight-gap'>__________</span> boy. He’s very sure of himself.",
-                options: ["self-confident", "sensitive", "reliable"],
-                ans: "self-confident"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "We’re <span class='highlight-gap'>__________</span> our English exams next month.",
-                options: ["revising", "taking", "getting"],
-                ans: "taking"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "Jocelyn’s <span class='highlight-gap'>__________</span> her third year of university.",
-                options: ["in", "on", "at"],
-                ans: "in"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "The airline <span class='highlight-gap'>__________</span> us £50 to take our skis on the plane!",
-                options: ["made", "charged", "cost"],
-                ans: "charged"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "This is Will. He was my <span class='highlight-gap'>__________</span> at Pinter and Marshall’s, the company where I used to work.",
-                options: ["classmate", "flatmate", "colleague"],
-                ans: "colleague"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "I can’t apply for that job because you need professional <span class='highlight-gap'>__________</span>.",
-                options: ["degree", "grade", "qualifications"],
-                ans: "qualifications"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "My mum used to <span class='highlight-gap'>__________</span> us stay out late if we phoned her at certain times.",
-                options: ["let", "allow", "make"],
-                ans: "let"
-            },
-            {
-                task: "9. VOCABULARY (Multiple Choice Context)",
-                inst: "Choose the correct target word option to complete the passage.",
-                q: "This cottage has low <span class='highlight-gap'>__________</span> in some of the rooms.",
-                options: ["floors", "ceilings", "walls"],
-                ans: "ceilings"
-            }
+            // --- TASK 9 ---
+            { task: "Task 9: Multiple Choice", inst: "Select the vocabulary option that completes the line context.", q: "The bus was late, which was really <span class='gap-fill'>__________</span>.", options: ["frustrated", "frustration", "frustrating"], ans: "frustrating" },
+            { task: "Task 9: Multiple Choice", inst: "Select the vocabulary option that completes the line context.", q: "James was embarrassed because his phone <span class='gap-fill'>__________</span> during the interview.", options: ["went off", "cut off", "sent off"], ans: "went off" },
+            { task: "Task 9: Multiple Choice", inst: "Select the vocabulary option that completes the line context.", q: "This cottage has low <span class='gap-fill'>__________</span> in some of the rooms.", options: ["floors", "ceilings", "walls"], ans: "ceilings" }
         ];
 
         let index = 0;
-        let score = 0;
-        let answered = false;
+        let scorePoints = 0;
+        let rightAnswersCount = 0;
+        let streak = 0;
+        let questionAnswered = false;
 
-        function displayQuestion() {
-            answered = false;
-            document.getElementById("action-btn").style.display = "none";
+        function runGameStep() {
+            questionAnswered = false;
+            document.getElementById("next-btn").style.display = "none";
             
-            let item = masterExam[index];
+            let dataItem = quizizzData[index];
             
-            // Set Titles & Descriptions
-            document.getElementById("task-header").innerText = `TASK ${item.task}`;
-            document.getElementById("task-instruction").innerText = item.inst;
-            document.getElementById("question-text").innerHTML = item.q;
-            document.getElementById("step-tracker").innerText = `Question ${index + 1} of ${masterExam.length}`;
-            document.getElementById("live-score").innerText = `Score: ${score}`;
+            // Set HUD Info Text
+            document.getElementById("hud-task").innerText = dataItem.task;
+            document.getElementById("hud-instruction").innerText = dataItem.inst;
+            document.getElementById("hud-question").innerHTML = dataItem.q;
+            document.getElementById("hud-score").innerText = `✨ ${scorePoints} pts`;
+            document.getElementById("streak-box").innerText = `🔥 Combo Streak: ${streak}`;
+            
+            // Progress Indicator Logic
+            let percentage = (index / quizizzData.length) * 100;
+            document.getElementById("progress-indicator").style.width = `${percentage}%`;
 
-            // Layout settings for choices layout
-            let box = document.getElementById("choices-box");
-            box.innerHTML = "";
-            
-            if(item.options.length <= 2) {
-                box.classList.remove("split");
-            } else {
-                box.classList.add("split");
-            }
+            // Draw up 3 choices cleanly
+            let btnBox = document.getElementById("choices-box");
+            btnBox.innerHTML = "";
 
-            // Create selection elements
-            item.options.forEach(opt => {
+            dataItem.options.forEach(opt => {
                 let btn = document.createElement("button");
-                btn.className = "choice-btn";
-                btn.innerHTML = opt;
-                btn.onclick = () => evaluateChoice(btn, opt, item.ans);
-                box.appendChild(btn);
+                btn.className = "quizizz-btn";
+                btn.innerText = opt;
+                btn.onclick = () => checkSelectedButton(btn, opt, dataItem.ans);
+                btnBox.appendChild(btn);
             });
         }
 
-        function evaluateChoice(selectedBtn, chosen, correct) {
-            if (answered) return;
-            answered = true;
+        function checkSelectedButton(clickedBtn, userPicked, actualAnswer) {
+            if (questionAnswered) return;
+            questionAnswered = true;
 
-            let allButtons = document.getElementsByClassName("choice-btn");
-            
-            if (chosen === correct) {
-                selectedBtn.classList.add("correct");
-                score++;
+            let allQuizButtons = document.getElementsByClassName("quizizz-btn");
+
+            if (userPicked === actualAnswer) {
+                clickedBtn.classList.add("correct");
+                streak++;
+                // Score calculations: base point 100 + streak multiplier bonuses
+                scorePoints += 100 + (streak * 20);
+                rightAnswersCount++;
+                document.getElementById("streak-box").innerText = `🔥 Combo Streak: ${streak} (+${streak * 20} Bonus!)`;
             } else {
-                selectedBtn.classList.add("wrong");
-                // Highlight actual valid path
-                for (let b of allButtons) {
-                    if (b.innerText === correct) {
-                        b.classList.add("correct");
+                clickedBtn.classList.add("wrong");
+                streak = 0; // Reset continuous combo sequence tracking
+                document.getElementById("streak-box").innerText = `💥 Streak Broken!`;
+                
+                // Expose target valid answer element in green styling
+                for (let buttonElement of allQuizButtons) {
+                    if (buttonElement.innerText === actualAnswer) {
+                        buttonElement.classList.add("correct");
                     }
                 }
             }
 
-            document.getElementById("live-score").innerText = `Score: ${score}`;
-            document.getElementById("action-btn").style.display = "block";
+            document.getElementById("hud-score").innerText = `✨ ${scorePoints} pts`;
+            document.getElementById("next-btn").style.display = "block";
         }
 
-        function handleActionClick() {
+        function moveToNext() {
             index++;
-            if (index < masterExam.length) {
-                displayQuestion();
+            if (index < quizizzData.length) {
+                runGameStep();
             } else {
-                showFinalResults();
+                displayFinalLeaderboard();
             }
         }
 
-        function showFinalResults() {
-            document.getElementById("quiz-flow").style.display = "none";
-            document.getElementById("end-flow").style.display = "block";
-            document.getElementById("final-tally").innerText = `${score} / ${masterExam.length}`;
+        function displayFinalLeaderboard() {
+            document.getElementById("game-arena").style.display = "none";
+            document.getElementById("end-arena").style.display = "block";
             
-            let percent = (score / masterExam.length) * 100;
-            let msg = "";
-            if(percent >= 85) msg = "🏆 Absolute Masters! Have an incredible summer holiday!";
-            else if (percent >= 60) msg = "😎 Solid work! You are officially ready for summer vacation!";
-            else msg = "☀️ Nice effort! Enjoy the sunshine and great job wrapping up the year!";
+            document.getElementById("final-tally").innerText = `${rightAnswersCount} / ${quizizzData.length} Correct`;
             
-            document.getElementById("holiday-message").innerText = msg;
+            let finalRatio = (rightAnswersCount / quizizzData.length) * 100;
+            let performanceFeedbackText = "";
+            
+            if (finalRatio >= 85) performanceFeedbackText = "⚡ Quizizz Gods! Absolute Perfection! Have a legendary summer!";
+            else if (finalRatio >= 65) performanceFeedbackText = "😎 Awesome job team! You crushed the final review!";
+            else performanceFeedbackText = "☀️ Good try! Ready to relax and enjoy the summer holidays!";
+            
+            document.getElementById("final-comment").innerText = performanceFeedbackText;
         }
 
-        // Boot
-        window.onload = displayQuestion;
+        // Initialize setup on window draw
+        window.onload = runGameStep;
     </script>
 </body>
 </html>
