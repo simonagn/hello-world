@@ -1,139 +1,350 @@
-GRAMMAR
-1	Complete the sentences. Use the correct form of the verb in brackets.
-Example:	If I knew (know) the answer, I’d tell you.
-1	You’re late! I ______________ (stand) here in the cold for 20 minutes.
-2	If you don’t buy the tickets soon, they ______________ (sell) out.
-3	Pretending ______________ (be) injured in a tackle is a bad idea, but footballers often do it.
-4	What ______________ you ______________ (do) when I called you earlier?
-5	Tim’s a freelance software designer. He ______________ (work) for himself since 2016.
-6	Andrew ______________ (visited) Nepal in 2014, the year before the terrible earthquake.
-7	Our sales ______________ (improve) as soon as we create our website.
-8	Anthony said he ______________ (be) sorry but I didn’t believe him.
-9	Remember ______________ (call) me when you get to the hotel.
-10	That cake ______________ (smell) wonderful!
-11	I think the children ______________ (rescue) by the police in the next episode, don’t you?
-12	The concert ______________ just ______________ (start) and they won’t let us into the hall.
-13	______________ (watch) cookery programmes on TV makes me hungry.
-14	______________ you ______________ (book) that restaurant if you’d read the reviews?
-15	If you’re stressed, please let me ______________ (help) you.
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End of Year English Quiz</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --success: #2ec4b6;
+            --danger: #e71d36;
+            --background: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #2b2d42;
+        }
 
-	15
-2	Complete the sentences with two words.
-Example:	You don’t have to shout. I can hear you.
-1	There are only ________ ________ people in the world who have been in space.
-2	That was hilarious! I think that was ________ ________ film I’ve ever seen.
-3	________ they ________ to see each other again?
-4	That ________ ________ my old colleague Moya over there, but I’m not sure.
-5	Bella would tell us if she was feeling insecure, ________ ________?
-6	She ________ ________ if I knew you but I said I didn’t.
-7	When I was at school, we ________ ________ do lots of homework at the library.
-8	There are ________ ________ cars in town on Saturdays. There’s nowhere to park.
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-	8
- 
-3	Retain the meaning and complete one sentence.
-Example:	The buses are quite easy to use. The Underground is easier.
-The Underground is easier to use than the buses.
-1	Chantelle makes costumes for films. She wanted to act when she was little.
-	Chantelle _____________________________________________
-2	I hope I see you at the conference. I want to introduce you to Malek.
-	If_____________________________________________
-3	Mushu is in Florence. It’s a very expensive restaurant.
-	Mushu _____________________________________________
-4	My neighbour has complained about our party. His children are really noisy.
-	My _____________________________________________
-5	I can’t afford that car. I wish I could buy it.
-	If _____________________________________________
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-top: 20px;
+        }
 
-	5
-4	Underline the correct word(s).
-Example:	Do you have to / must leave now?
-1	I’m sorry, I’m not recognizing / I don’t recognize you.
-2	What do you call the words at the end of a film where / that show all the jobs?
-3	The eggs are boiled / to boil for ten minutes. Meanwhile, prepare the toast.
-4	Max said Max / he loved Indian food so I’ve cooked a curry.
-5	I don’t usually enjoy / enjoying crime novels. But I loved this one.
-6	You’re worse / really bad at dancing than me.
-7	I like travelling abroad for work but I hate not seeing / don’t see my children.
-8	Everything is going to be / being fine.
-9	Tim can’t be / must be sick. He never misses football training.
-10	We ’ll see / going to see you at the match, won’t we?
-11	If you like the flat, you should / might rent it.
-12	Didn’t you used to have / use to have a car like that one?
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
 
-	12
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            height: 12px;
+            border-radius: 6px;
+            margin: 25px 0;
+            overflow: hidden;
+        }
 
-Grammar total		40
- 
-VOCABULARY
-5	Match 1–8 with a–h.
-1	borrow  _d_	a   money to a friend
-2	do  ___		b   at a joke
-3	play   ___	c   a business
-4	prove   ___	d   money from the bank
-5	laugh   ___	e   a part in a film
-6	earn   ___	f   something is true
-7	run   ___		g   a salary
-8	lend   ___	h   yoga
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
 
-	8
-6	Circle the odd word out.
-Example: cabbage	      mango	aubergine	pepper
-1	cast		extra		review		critic
-2	unplug		delete		charger	update
-3	redundant	unemployed	resigned	promoted
-4	coach		circuit		track		slope
-5	translator	lawyer		freelance	musician
+        .category-tag {
+            display: inline-block;
+            background: #e1eaf5;
+            color: var(--primary);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
 
-	5
-7	Change the words using the prefixes and suffixes in the box. There are two that you don’t need.
--ful   -able   -ment   self-   il-   un-  dis-   -ation   -ian     -ist
-Example: imaginative	unimaginative
-1	legal	___________
-2	hope	___________ 
-3	honest	___________ 
-4	science	___________
-5	educate	___________
-6	improve	___________
-7	society	___________
+        .question-text {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
 
-	7
-8	Complete the sentences with one word.
-Example:	Can you turn the radio up, please? I can’t hear it properly.
-1	I parked in the wrong place so I had to pay a ___________.
-2	Mr Cushing wants to talk to you ___________ your history essay.
-3	___________ speaking, private schools are for rich families.
-4	I’m trying to cut ___________ on tea and coffee.
-5	On the ___________ , I give this rom-com three stars.
-6	I’m ___________ up with this traffic, aren’t you?
-7	Don’t click ___________ links in emails if you’re not sure who sent the message.
-8	I can’t choose ___________ the soup or the pasta. What do you think?
-9	It took me 45 minutes to get ___________ my house to here. The traffic was terrible.
-10	‘When did you become ___________ in science fiction films?’ ‘When I was about 14.’
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-	10
-9	Complete the sentences with the correct words.
-Example:	I’ve been wasting my money on silly things like trainers.
-	saving   wasting   buying
-1	The bus was late, which was really ________.
-	frustrated     frustration     frustrating
-2	James was embarrassed because his phone ________ during the interview.
-	went off   cut off   sent off
-3	Ethan is a ________ boy. He’s very sure of himself.
-	self-confident   sensitive   reliable
-4	We’re ________ our English exams next month.
-	revising   taking   getting
-5	Jocelyn’s ________ her third year of university.
-	in   on   at
-6	The airline ________ us £50 to take our skis on the plane!
-	made   charged   cost
-7	This is Will. He was my ________ at Pinter and Marshall’s, the company where I used to work.
-	classmate   flatmate   colleague
-8	I can’t apply for that job because you need professional ________.
-	degree   grade   qualifications
-9	My mum used to ________ us stay out late if we phoned her at certain times.
-	let   allow   make
-10	This cottage has low ________ in some of the rooms.
-	floors   ceilings   walls
+        .option-btn {
+            background-color: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 1.4rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            outline: none;
+            /* Optimized for Smartboard touch interactions */
+            touch-action: manipulation; 
+        }
 
-	10
+        .option-btn:hover {
+            background-color: #f1f3f5;
+            border-color: #ced4da;
+            transform: translateY(-2px);
+        }
+
+        .option-btn.correct {
+            background-color: #d4edda !important;
+            border-color: var(--success) !important;
+            color: #155724;
+        }
+
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #721c24;
+        }
+
+        .feedback-box {
+            font-size: 1.6rem;
+            font-weight: bold;
+            min-height: 40px;
+            margin-bottom: 20px;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            display: none;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(74, 111, 165, 0.3);
+        }
+
+        .next-btn:hover {
+            background-color: #3a5d8c;
+        }
+
+        .score-board {
+            font-size: 1.2rem;
+            color: #6c757d;
+            margin-top: 15px;
+        }
+
+        /* Results Display */
+        .results-screen {
+            display: none;
+        }
+        .final-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        .cheer-msg {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
+        .restart-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="quiz-container">
+        <!-- Live Quiz Screen -->
+        <div id="game-screen">
+            <h1 id="quiz-title">End of Year English Challenge 🎓</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div class="category-tag" id="category">GRAMMAR</div>
+            <div class="question-text" id="question">Loading question...</div>
+            
+            <div class="options-grid" id="options">
+                <!-- Smartboard choice buttons will generate here dynamically -->
+            </div>
+
+            <div class="feedback-box" id="feedback"></div>
+            <button class="next-btn" id="next-button" onclick="nextQuestion()">Next Question ➡️</button>
+            <div class="score-board" id="score-text">Score: 0 / 0</div>
+        </div>
+
+        <!-- Final Results Screen -->
+        <div id="results-screen" class="results-screen">
+            <h1>🎉 Quiz Complete! 🎉</h1>
+            <p style="font-size: 1.3rem;">Fantastic effort on our final day of school!</p>
+            <div class="final-score" id="final-score-text">0/0</div>
+            <div class="cheer-msg" id="final-comment"></div>
+            <button class="restart-btn" onclick="restartQuiz()">Restart Game 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // Mixed choices pool from your test parameters to challenge students on the smartboard
+        const quizData = [
+            // Task 1 & 4 Grammar
+            { cat: "GRAMMAR", q: "You’re late! I ______________ here in the cold for 20 minutes.", choices: ["stand", "stood", "have been standing", "am standing"], answer: "have been standing" },
+            { cat: "GRAMMAR", q: "If you don’t buy the tickets soon, they ______________ out.", choices: ["sell", "will sell", "sold", "will be selling"], answer: "will sell" },
+            { cat: "GRAMMAR", q: "Pretending ______________ injured in a tackle is a bad idea, but footballers often do it.", choices: ["to be", "being", "be", "to being"], answer: "to be" },
+            { cat: "GRAMMAR", q: "What ______________ you ______________ when I called you earlier?", choices: ["did / do", "were / doing", "are / doing", "have / done"], answer: "were / doing" },
+            { cat: "GRAMMAR", q: "Tim’s a freelance software designer. He ______________ for himself since 2016.", choices: ["works", "is working", "has been working", "worked"], answer: "has been working" },
+            { cat: "GRAMMAR", q: "Andrew ______________ Nepal in 2014, the year before the terrible earthquake.", choices: ["visited", "has visited", "was visiting", "had visited"], answer: "visited" },
+            { cat: "GRAMMAR", q: "Our sales ______________ as soon as we create our website.", choices: ["improve", "will improve", "are improving", "improved"], answer: "will improve" },
+            { cat: "GRAMMAR", q: "Anthony said he ______________ sorry but I didn’t believe him.", choices: ["is", "was", "has been", "would be"], answer: "was" },
+            { cat: "GRAMMAR", q: "Remember ______________ me when you get to the hotel.", choices: ["calling", "to call", "call", "to calling"], answer: "to call" },
+            { cat: "GRAMMAR", q: "That cake ______________ wonderful!", choices: ["smells", "is smelling", "smell", "smelled"], answer: "smells" },
+            { cat: "GRAMMAR", q: "I think the children ______________ by the police in the next episode, don’t you?", choices: ["rescue", "will rescue", "will be rescued", "are rescuing"], answer: "will be rescued" },
+            { cat: "GRAMMAR", q: "The concert ______________ just ______________ and they won’t let us into the hall.", choices: ["is / starting", "has / started", "did / start", "was / starting"], answer: "has / started" },
+            { cat: "GRAMMAR", q: "______________ cookery programmes on TV makes me hungry.", choices: ["Watch", "To watch", "Watching", "Watched"], answer: "watching" },
+            { cat: "GRAMMAR", q: "______________ you ______________ that restaurant if you’d read the reviews?", choices: ["Would / book", "Did / book", "Would / have booked", "Had / booked"], answer: "Would / have booked" },
+            { cat: "GRAMMAR", q: "If you’re stressed, please let me ______________ you.", choices: ["help", "to help", "helping", "helped"], answer: "help" },
+            
+            // Task 2 Two Word Gaps
+            { cat: "GRAMMAR", q: "There are only ________ ________ people in the world who have been in space.", choices: ["a little", "a few", "few regular", "too much"], answer: "a few" },
+            { cat: "GRAMMAR", q: "That was hilarious! I think that was ________ ________ film I’ve ever seen.", choices: ["the funnier", "funniest", "the funniest", "most funny"], answer: "the funniest" },
+            { cat: "GRAMMAR", q: "________ they ________ to see each other again?", choices: ["Will / going", "Are / going", "Do / go", "Have / gone"], answer: "Are / going" },
+            { cat: "GRAMMAR", q: "That ________ ________ my old colleague Moya over there, but I’m not sure.", choices: ["must be", "can't be", "might be", "should be"], answer: "might be" },
+            { cat: "GRAMMAR", q: "Bella would tell us if she was feeling insecure, ________ ________?", choices: ["would she", "wouldn't she", "will she", "won't she"], answer: "wouldn't she" },
+            { cat: "GRAMMAR", q: "She ________ ________ if I knew you but I said I didn’t.", choices: ["asked me", "told me", "said me", "asked to"], answer: "asked me" },
+            { cat: "GRAMMAR", q: "When I was at school, we ________ ________ do lots of homework at the library.", choices: ["were used", "use to", "used to", "usually did"], answer: "used to" },
+            { cat: "GRAMMAR", q: "There are ________ ________ cars in town on Saturdays. There’s nowhere to park.", choices: ["too much", "too many", "a lot", "so much"], answer: "too many" },
+            
+            // Task 5 Collocations
+            { cat: "VOCABULARY", q: "Which item perfectly matches the verb: **'play'**?", choices: ["money to a friend", "a part in a film", "a business", "yoga"], answer: "a part in a film" },
+            { cat: "VOCABULARY", q: "Which item perfectly matches the verb: **'run'**?", choices: ["a salary", "something is true", "a business", "at a joke"], answer: "a business" },
+            
+            // Task 6 Odd Word Out
+            { cat: "VOCABULARY", q: "Find the odd word out: **cast, extra, review, critic**", choices: ["cast", "extra", "review", "critic"], answer: "review" },
+            { cat: "VOCABULARY", q: "Find the odd word out: **redundant, unemployed, resigned, promoted**", choices: ["redundant", "unemployed", "resigned", "promoted"], answer: "promoted" },
+            
+            // Task 8 & 9 Vocabulary Words
+            { cat: "VOCABULARY", q: "I parked in the wrong place so I had to pay a __________.", choices: ["ticket", "fine", "tax", "fee"], answer: "fine" },
+            { cat: "VOCABULARY", q: "I’m trying to cut __________ on tea and coffee.", choices: ["down", "off", "out", "up"], answer: "down" },
+            { cat: "VOCABULARY", q: "The airline __________ us £50 to take our skis on the plane!", choices: ["made", "cost", "charged", "demanded"], answer: "charged" },
+            { cat: "VOCABULARY", q: "This cottage has low __________ in some of the rooms.", choices: ["floors", "ceilings", "walls", "roofs"], answer: "ceilings" }
+        ];
+
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let hasAnswered = false;
+
+        function loadQuestion() {
+            hasAnswered = false;
+            document.getElementById("next-button").style.display = "none";
+            document.getElementById("feedback").innerText = "";
+            
+            let qData = quizData[currentQuestionIdx];
+            
+            // Update Progress UI
+            document.getElementById("category").innerText = qData.cat;
+            document.getElementById("question").innerHTML = qData.q;
+            document.getElementById("score-text").innerText = `Score: ${score} / ${currentQuestionIdx}`;
+            
+            let progressPercent = (currentQuestionIdx / quizData.length) * 100;
+            document.getElementById("progress").style.width = `${progressPercent}%`;
+
+            // Display Choices as big touch-friendly buttons
+            let optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            
+            qData.choices.forEach(choice => {
+                let btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = choice;
+                btn.onclick = () => selectAnswer(btn, choice, qData.answer);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(selectedBtn, selectedChoice, correctChoice) {
+            if (hasAnswered) return; // Prevent clicking multiple choices
+            hasAnswered = true;
+
+            let buttons = document.getElementsByClassName("option-btn");
+            
+            if (selectedChoice === correctChoice) {
+                selectedBtn.classList.add("correct");
+                document.getElementById("feedback").innerHTML = "Correct! Great job! 🎉";
+                document.getElementById("feedback").style.color = "var(--success)";
+                score++;
+            } else {
+                selectedBtn.classList.add("wrong");
+                document.getElementById("feedback").innerHTML = `Oops! Correct answer was: <strong>${correctChoice}</strong>`;
+                document.getElementById("feedback").style.color = "var(--danger)";
+                
+                // Highlight the actual correct one to help them learn
+                for (let btn of buttons) {
+                    if (btn.innerText === correctChoice) {
+                        btn.classList.add("correct");
+                    }
+                }
+            }
+
+            document.getElementById("score-text").innerText = `Score: ${score} / ${currentQuestionIdx + 1}`;
+            document.getElementById("next-button").style.display = "block";
+        }
+
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById("game-screen").style.display = "none";
+            document.getElementById("results-screen").style.display = "block";
+            
+            document.getElementById("final-score-text").innerText = `${score} / ${quizData.length}`;
+            
+            let percent = (score / quizData.length) * 100;
+            let comment = "";
+            if (percent >= 85) comment = "🥇 Brilliant! Have an amazing, well-deserved summer vacation!";
+            else if (percent >= 60) comment = "🥈 Great job! Ready for the next grade level!";
+            else comment = "👍 Good practice! Keep reading over the summer holidays!";
+            
+            document.getElementById("final-comment").innerText = comment;
+        }
+
+        function restartQuiz() {
+            currentQuestionIdx = 0;
+            score = 0;
+            document.getElementById("results-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+            loadQuestion();
+        }
+
+        // Initialize on boot up
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
