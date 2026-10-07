@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Houses Flashcards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: a floor-plan sheet — grid paper ground, one big "room tag" card centred, room chips above, controls below */
+:root{
+  --bg:#eef2f5; --grid:#d9e1e8; --paper:#ffffff; --ink:#1c2b3a; --muted:#5c6c7c;
+  --line:#c7d2dc; --accent:#1d6b52; --accent-soft:#dcefe7; --warn:#b4432d; --warn-soft:#f6e1dc;
+  --shadow:0 1px 0 rgba(28,43,58,.06),0 10px 30px -12px rgba(28,43,58,.25);
+  --f-display:"Bricolage Grotesque",ui-rounded,"Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#121a22; --grid:#1b2631; --paper:#1a2530; --ink:#e6edf3; --muted:#93a4b5;
+  --line:#2d3c4a; --accent:#5cc79d; --accent-soft:#16352b; --warn:#ef8a74; --warn-soft:#3a211c;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 12px 30px -12px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#121a22; --grid:#1b2631; --paper:#1a2530; --ink:#e6edf3; --muted:#93a4b5;
+  --line:#2d3c4a; --accent:#5cc79d; --accent-soft:#16352b; --warn:#ef8a74; --warn-soft:#3a211c;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 12px 30px -12px rgba(0,0,0,.7); color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;padding-inline:16px;padding-block:20px 40px;min-height:100%}
+.wrap{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 16px}
+.eyebrow{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+h1{font-family:var(--f-display);font-weight:800;font-size:clamp(30px,6vw,42px);line-height:1.05;margin:2px 0 0;text-wrap:balance;letter-spacing:-.01em}
+.mode{display:flex;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);padding:3px}
+.mode button{border:0;background:transparent;color:var(--muted);font:700 13px var(--f-body);padding:7px 12px;border-radius:999px;cursor:pointer}
+.mode button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+
+.rooms{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);font:400 14px var(--f-body);
+  padding:6px 11px;border-radius:8px;cursor:pointer;display:inline-flex;gap:6px;align-items:baseline}
+.chip small{color:var(--muted);font-variant-numeric:tabular-nums;font-size:12px}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);color:var(--ink);font-weight:700}
+.chip:hover{border-color:var(--accent)}
+
+.stage{perspective:1400px}
+.card{position:relative;width:100%;aspect-ratio:16/10;max-width:100%;min-height:240px;cursor:pointer;
+  transform-style:preserve-3d;transition:transform .45s cubic-bezier(.3,.7,.3,1);border:0;padding:0;background:none;color:inherit;font:inherit;display:block}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--paper);
+  border:2px solid var(--ink);border-radius:4px;box-shadow:var(--shadow);display:flex;flex-direction:column;
+  justify-content:center;align-items:center;padding:28px 24px;text-align:center;gap:10px}
+.face.back{transform:rotateY(180deg);border-color:var(--accent)}
+/* door-swing mark in the corner, like a floor plan */
+.face::after{content:"";position:absolute;right:-2px;bottom:-2px;width:46px;height:46px;border-top-left-radius:46px;
+  border-top:2px dashed var(--line);border-left:2px solid var(--line);opacity:.9}
+.tag{position:absolute;top:12px;left:14px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.lang{position:absolute;top:12px;right:14px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.word{font-family:var(--f-display);font-weight:700;font-size:clamp(26px,6.5vw,44px);line-height:1.12;text-wrap:balance;overflow-wrap:anywhere}
+.back .word{color:var(--accent)}
+.hint{font-size:13px;color:var(--muted)}
+.speak{position:absolute;bottom:12px;left:14px;border:1.5px solid var(--line);background:transparent;color:var(--ink);
+  border-radius:999px;font:700 12px var(--f-body);padding:5px 10px;cursor:pointer}
+
+.bar{display:flex;align-items:center;gap:12px}
+.track{flex:1;height:8px;background:var(--paper);border:1.5px solid var(--line);border-radius:999px;overflow:hidden}
+.fill{height:100%;background:var(--accent);width:0;transition:width .3s}
+.count{font-variant-numeric:tabular-nums;font-size:14px;color:var(--muted);white-space:nowrap}
+
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{border:2px solid var(--ink);background:var(--paper);color:var(--ink);font:700 16px var(--f-body);padding:13px 14px;border-radius:6px;cursor:pointer}
+.btn.again{border-color:var(--warn);background:var(--warn-soft);color:var(--ink)}
+.btn.know{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn kbd{font:400 11px var(--f-body);color:var(--muted);margin-left:6px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.link{border:0;background:none;color:var(--muted);font:700 14px var(--f-body);cursor:pointer;padding:6px 2px;text-decoration:underline;text-underline-offset:3px}
+.link:hover{color:var(--ink)}
+.keys{font-size:12px;color:var(--muted)}
+
+.done{background:var(--paper);border:2px solid var(--accent);border-radius:4px;padding:28px 22px;text-align:center;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:8px;align-items:center}
+.done h2{font-family:var(--f-display);font-size:30px;margin:0}
+.done p{margin:0;color:var(--muted);max-width:44ch}
+
+button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+@media (max-width:520px){.card{aspect-ratio:4/5}.keys{display:none}}
+@media (prefers-reduced-motion:reduce){.card,.fill{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Matura Leader B1 · Unit 2 · Key Vocabulary</div>
+      <h1>Houses</h1>
+    </div>
+    <div class="mode" role="group" aria-label="Direction">
+      <button id="dir-en" aria-pressed="true">English → Magyar</button>
+      <button id="dir-hu" aria-pressed="false">Magyar → English</button>
+    </div>
+  </header>
+
+  <nav class="rooms" id="rooms" aria-label="Topics"></nav>
+
+  <div class="bar">
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <button class="card" id="card" aria-label="Flip card">
+      <div class="face front">
+        <span class="tag" id="tag-f"></span><span class="lang" id="lang-f"></span>
+        <div class="word" id="front"></div>
+        <div class="hint">Tap to see the answer</div>
+      </div>
+      <div class="face back">
+        <span class="tag" id="tag-b"></span><span class="lang" id="lang-b"></span>
+        <div class="word" id="back"></div>
+        <div class="hint" id="back-hint"></div>
+      </div>
+    </button>
+  </div>
+  <div class="done" id="done" hidden>
+    <h2>Deck finished!</h2>
+    <p id="done-text"></p>
+    <button class="btn know" id="restart">Practise again</button>
+  </div>
+
+  <div class="actions" id="actions">
+    <button class="btn again" id="again">Not yet<kbd>←</kbd></button>
+    <button class="btn know" id="know">I knew it<kbd>→</kbd></button>
+  </div>
+
+  <div class="tools">
+    <div style="display:flex;gap:14px;flex-wrap:wrap">
+      <button class="link" id="shuffle">Shuffle &amp; restart</button>
+      <button class="link" id="sayBtn">Hear it 🔊</button>
+    </div>
+    <span class="keys">Space = flip · ← not yet · → I knew it</span>
+  </div>
+</div>
+
+<script>
+const RAW = {
+"Kinds of houses":`block of flats|háztömb
+bungalow|egyszintes ház
+cottage|vidéki ház, vendégház
+detached house|családi ház
+maisonette|bérlakás, stúdiólakás
+multi-storey house|emeletes ház
+semi-detached house|ikerház
+skyscraper|felhőkarcoló
+summer house|nyaraló, kerti lak
+ten-storey block|tízemeletes háztömb
+a ten-storey house|tízemeletes ház
+terraced house|sorház
+tower block|toronyház
+villa|villa`,
+"Flat":`council flat|állami bérlakás
+flat (GB) / apartment (US)|lakás
+one-room flat / bedsit / bedsitter|garzonlakás
+penthouse|tetőtéri panorámás lakás
+three-room flat|háromszobás lakás
+two-storey / split-level flat|galériás lakás`,
+"Description":`antique furniture|antik bútor, stílbútor
+convenient / comfortable|megfelelő / kényelmes
+cosy|lakályos
+functional|rendeltetésszerű
+furnished|bútorozott
+in good / bad condition|jó / rossz állapotú
+luxurious|fényűző
+modern|korszerű
+nicely-decorated|szépen berendezett
+peaceful|békés, nyugodt
+period furniture|stílbútor, antik bútor
+spacious / large|tágas / nagy
+sunny|napos
+tiny|pici
+unfurnished|bútorozatlan
+well-kept|jól karbantartott
+windows overlooking a busy street / park|az ablakok forgalmas utcára / parkra néznek
+with a view of the lake|tóra néző`,
+"Parts of the house":`attic|padlás, padlásszoba
+balcony|erkély
+basement|alagsor
+bathroom|fürdőszoba
+bedroom|hálószoba
+child's / children's room|gyerekszoba
+corridor|folyosó
+dining room|ebédlő
+downstairs|alsó szint (kétszintes házban)
+drive|kocsifeljáró, bejáró
+fence|kerítés
+floor|padló, emelet
+garage|garázs
+garden|kert
+ground floor|földszint
+guest / spare room|vendégszoba
+hall|előszoba
+kitchen|konyha
+lawn|pázsit
+lift (noun)|felvonó, lift
+loft|galéria, loft
+porch|tornác
+roof|tető
+sitting room / living room|nappali
+stairs|lépcső
+study|dolgozószoba
+upstairs|felső szint (kétszintes házban)
+utility room|mosókonyha`,
+"Equipment":`(built-in / fitted) wardrobe|beépített szekrény
+blind (noun)|roló, reluxa
+carpet|szőnyeg
+central heating|központi fűtés
+curtain|függöny
+fitted carpet|padlószőnyeg
+ornament|dísztárgy, épületdísz
+pot plant|cserepes növény
+radiator|radiátor, fűtőtest
+rug|rongyszőnyeg / (futó)szőnyeg
+shelf|polc
+vacuum cleaner|porszívó`,
+"Kitchen":`(wall) cupboard|konyhaszekrény
+cooker|tűzhely
+dishwasher|mosogatógép
+freezer|mélyhűtő, fagyasztó
+fridge|hűtőszekrény
+microwave oven|mikrohullámú sütő
+sink|mosogató`,
+"Bathroom":`bath(tub)|fürdőkád
+cabinet|vitrin, üveges szekrény
+laundry basket|szennyeskosár
+mirror|tükör
+shower|zuhanyzó
+tap|csap
+toilet|vécé
+washbasin|mosdókagyló
+washing machine|mosógép`,
+"Living room":`armchair|fotel
+bookcase|könyvszekrény
+bookshelf|könyvespolc
+chest of drawers|komód, sublót
+coffee table|dohányzóasztal
+cushion|párna, díszpárna
+display cabinet|vitrin
+fireplace|kandalló
+furniture|bútorzat, bútor
+rocking chair|hintaszék
+sofa / (corner) couch|kanapé / sarokheverő
+TV|televízió`,
+"Study & bedroom":`desk|íróasztal
+desk / swivel chair|irodaszék / forgószék
+wastepaper basket / bin|papírkosár / kuka
+bedside table|éjjeliszekrény
+clothes shelf|ruhás polc
+single / double bed|egyszemélyes / kétszemélyes ágy
+wardrobe|ruhásszekrény`,
+"Activities":`change a lightbulb|kicseréli a villanykörtét
+clean / tidy up|kitakarít
+decorate a room|kifest egy szobát
+do housework|házimunkát végez
+dust|portalanít, letörli a port
+house renovation|háztatarozás / felújítás
+mend|megjavít
+move in / out|beköltözik / kiköltözik
+renovate / do up|helyreállít / rendbehoz`,
+"Other words":`accommodation|szállás
+arrange a flat|lakást közvetít
+Croydon district|Croydon kerület, körzet
+do the cleaning / cooking / ironing / washing-up|kitakarít / megfőz / kivasal / elmosogat
+electricity / telephone bill|villany- / telefonszámla
+estate agent / agency|ingatlanügynök / ingatlanügynökség
+flatmate|lakótárs
+for sale|eladó
+housing estate|lakótelep
+I live at 1 Petőfi Street, flat 1.|A Petőfi út 1. szám alatt az 1-es számú lakásban lakom.
+in the centre|a központban
+In the neighbourhood there is a school.|A környéken van egy iskola.
+in the suburbs|a kertvárosban
+landlord / landlady|főbérlő
+live on the first / second floor|az első / második emeleten lakik
+located in a residential area|egy lakónegyedben található
+lower / increase the rent|csökkenti / emeli a bérleti díjat
+multi-storey building|többemeletes épület
+neighbour|szomszéd
+pay (high / low) rent|magas / alacsony bérleti díjat fizet
+pay the bills|kiegyenlíti a számlát
+rent a flat / room from sb|lakást / szobát bérel valakitől
+rent a flat / room to sb|lakást / szobát bérel valaki számára
+rural|vidéki
+share a room|megosztja a szobát valakivel
+take the rubbish out|kiviszi a szemetet
+tenant|főbérlő, lakó
+urban|városi
+We had our house renovated / done up last year.|Tavaly tataroztattuk / újíttattuk fel a házunkat.`
+};
+const CARDS = [];
+for (const [cat, txt] of Object.entries(RAW)) txt.split("\n").forEach(l => {
+  const [en, hu] = l.split("|"); CARDS.push({ id: CARDS.length, cat, en: en.trim(), hu: hu.trim() });
+});
+
+const $ = id => document.getElementById(id);
+const store = { get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d } catch(e){ return d } },
+                set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)) } catch(e){} } };
+
+let cat = store.get("hf-cat", "All");
+let dir = store.get("hf-dir", "en");
+let queue = [], total = 0, known = 0, flipped = false;
+
+function shuffle(a){ for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a }
+
+function renderRooms(){
+  const cats = ["All", ...Object.keys(RAW)];
+  $("rooms").innerHTML = cats.map(c => {
+    const n = c === "All" ? CARDS.length : CARDS.filter(x => x.cat === c).length;
+    return `<button class="chip" data-cat="${c}" aria-pressed="${c === cat}">${c}<small>${n}</small></button>`;
+  }).join("");
+}
+function start(){
+  const pool = CARDS.filter(c => cat === "All" || c.cat === cat);
+  queue = shuffle(pool.slice()); total = pool.length; known = 0;
+  $("done").hidden = true; $("stage").hidden = false; $("actions").hidden = false;
+  show();
+}
+function show(){
+  if (!queue.length){ finish(); return }
+  const c = queue[0];
+  setFlip(false);
+  const f = dir === "en" ? c.en : c.hu, b = dir === "en" ? c.hu : c.en;
+  $("front").textContent = f; $("back").textContent = b;
+  $("tag-f").textContent = $("tag-b").textContent = c.cat;
+  $("lang-f").textContent = dir === "en" ? "English" : "Magyar";
+  $("lang-b").textContent = dir === "en" ? "Magyar" : "English";
+  $("back-hint").textContent = dir === "en" ? c.en : "";
+  progress();
+}
+function progress(){
+  $("fill").style.width = (total ? known / total * 100 : 0) + "%";
+  $("count").textContent = `${known} / ${total} known · ${queue.length} left`;
+}
+function setFlip(v){ flipped = v; $("card").classList.toggle("flipped", v) }
+function answer(ok){
+  if (!queue.length) return;
+  if (!flipped){ setFlip(true); return }   // first press reveals the answer
+  const c = queue.shift();
+  if (ok) known++;
+  else queue.splice(Math.min(queue.length, 3 + Math.floor(Math.random() * 3)), 0, c); // comes back soon
+  show();
+}
+function finish(){
+  $("stage").hidden = true; $("actions").hidden = true; $("done").hidden = false;
+  $("done-text").textContent = `You went through all ${total} words in “${cat}”. Try the other direction next time!`;
+  progress();
+}
+function say(){
+  const c = queue[0]; if (!c || !("speechSynthesis" in window)) return;
+  try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(c.en); u.lang = "en-GB"; u.rate = .9; speechSynthesis.speak(u) } catch(e){}
+}
+function setDir(d){ dir = d; store.set("hf-dir", d);
+  $("dir-en").setAttribute("aria-pressed", d === "en"); $("dir-hu").setAttribute("aria-pressed", d === "hu"); start() }
+
+$("rooms").addEventListener("click", e => { const b = e.target.closest(".chip"); if (!b) return;
+  cat = b.dataset.cat; store.set("hf-cat", cat); renderRooms(); start() });
+$("card").addEventListener("click", () => setFlip(!flipped));
+$("know").addEventListener("click", () => answer(true));
+$("again").addEventListener("click", () => answer(false));
+$("shuffle").addEventListener("click", start);
+$("restart").addEventListener("click", start);
+$("sayBtn").addEventListener("click", say);
+$("dir-en").addEventListener("click", () => setDir("en"));
+$("dir-hu").addEventListener("click", () => setDir("hu"));
+document.addEventListener("keydown", e => {
+  if (e.target.closest && e.target.closest(".chip,.mode")) return;
+  if (e.key === " "){ e.preventDefault(); setFlip(!flipped) }
+  else if (e.key === "ArrowRight") answer(true);
+  else if (e.key === "ArrowLeft") answer(false);
+});
+
+if (!["All", ...Object.keys(RAW)].includes(cat)) cat = "All";
+$("dir-en").setAttribute("aria-pressed", dir === "en"); $("dir-hu").setAttribute("aria-pressed", dir === "hu");
+renderRooms(); start();
+</script>
+</body>
+</html>
