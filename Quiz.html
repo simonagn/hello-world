@@ -309,19 +309,7 @@
     function checkDeadlineLock() {
         const deadline = new Date(2026, 4, 19, 20, 0, 0); 
         const now = new Date();
-        if (now > deadline) {
-            document.body.innerHTML = `
-                <div class="overlay">
-                    <div class="overlay-card" style="border: 2px solid var(--danger);">
-                        <h2 style="color: var(--danger);">⏰ Access Denied</h2>
-                        <p>The deadline for this vocabulary test has passed.</p>
-                        <p style="font-size:0.9rem; color:#718096; font-weight: bold;">Expired: 2026. 05. 19. 20:00 (8 p.m.)</p>
-                    </div>
-                </div>`;
-            return true;
-        }
-        return false;
-    }
+        
 
     function startQuizWithIdentity() {
         const inputName = document.getElementById('student-name-input').value.trim();
